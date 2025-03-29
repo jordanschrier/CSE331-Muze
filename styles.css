@@ -1,25 +1,43 @@
 /* main color theme */
 :root {
     --background: #F5F3F1;
-    --red: #8C2F26;
-    --gray: #4B444B;
+    --maroon: #8C2F26;
+    --grayish: #4B444B;
 }
 
 /* 
     Attached to the img element of each thumbnail image.
-    Overrides the default Bootstrap padding.
+    Adds a border to ensure images pop from the background.
 */
 .thumbnail {
     border-radius: 10px;
-    border: 0.5px solid var(--gray);
+    border: 0.5px solid var(--grayish);
     width: 100%;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
-.col-sm {
-    padding: 0px 5px 0px 5px !important;
-}
-
-* {
+.container-md {
     background-color: var(--background);
+}
+
+.header {
+    background-color: white;
+    position: sticky;
+}
+
+.logo {
+    width: 150px;
+}
+
+h1 {
+    font-family: "Sometype Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 16pt !important;
+    color: var(--grayish) !important;
+}
+
+p, a {
+    color: var(--maroon) !important;
 }
