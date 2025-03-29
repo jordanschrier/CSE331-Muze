@@ -1,0 +1,25 @@
+/* main color theme */
+:root {
+    --background: #F5F3F1;
+    --red: #8C2F26;
+    --gray: #4B444B;
+}
+
+/* 
+    Attached to the img element of each thumbnail image.
+    Overrides the default Bootstrap padding.
+*/
+.thumbnail {
+    border-radius: 10px;
+    border: 0.5px solid var(--gray);
+    width: 100%;
+    margin-top: 10px;
+}
+
+.col-sm {
+    padding: 0px 5px 0px 5px !important;
+}
+
+* {
+    background-color: var(--background);
+}
