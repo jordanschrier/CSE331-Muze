@@ -16,6 +16,11 @@
     margin-top: 15px;
 }
 
+.full-image {
+    border-radius: 10px;
+    border: 0.5px solid var(--grayish);
+}
+
 .container-md {
     background-color: var(--background);
 }
@@ -38,6 +43,33 @@ h1 {
     color: var(--grayish) !important;
 }
 
+h2 {
+    font-family: "Sometype Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+    font-size: 14pt !important;
+    color: var(--grayish) !important;
+}
+
 p, a {
     color: var(--maroon) !important;
+}
+
+/* The left column containing all selected filters */
+.filter-col {
+    width: 250px;
+}
+
+/* The white description box next to a clicked image */
+.description {
+    background-color: white;
+    border-radius: 10px;
+    color: black;
+    height: 100%;
+}
+
+/* Temporary fix, 'posts' and 'add new inspo' weren't aligning correctly */
+.post-col {
+    width: calc(100vw - 280px);
 }
