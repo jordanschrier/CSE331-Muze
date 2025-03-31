@@ -22,28 +22,40 @@ function fetchPhotos()
             if(key < col_length){
                 // append the images to their respective columns and trigger uploadFunction when clicked
                 // using src instead of tn_src for the higher-quality images. longer loading times though
-                $("<img />")
-                .attr("src", $path_to_backend + val.src)
-                .attr("id", val.id)
-                .attr("class", "img-fluid thumbnail")
+                $("<a>")
+                .attr("href", "#") //requires this to actually be focusable and look like a link
+                    .append(
+                        $("<img />")
+                            .attr("src", $path_to_backend + val.src)
+                            .attr("id", val.id)
+                            .attr("class", "img-fluid thumbnail")
+                    )
                 .appendTo($tn_col1)
                 .click(function() {
                     clickPhoto(val.id);
                 });
             }else if((key >= col_length) && key < (col_length*2)){
-                $("<img />")
-                .attr("src", $path_to_backend + val.src)
-                .attr("id", val.id)
-                .attr("class", "thumbnail img-fluid")
+                $("<a>")
+                .attr("href", "#") //requires this to actually be focusable and look like a link
+                    .append(
+                        $("<img />")
+                            .attr("src", $path_to_backend + val.src)
+                            .attr("id", val.id)
+                            .attr("class", "img-fluid thumbnail")
+                    )
                 .appendTo($tn_col2)
                 .click(function() {
                     clickPhoto(val.id);
                 });
             }else{
-                $("<img />")
-                .attr("src", $path_to_backend + val.src)
-                .attr("id", val.id)
-                .attr("class", "thumbnail img-fluid")
+                $("<a>")
+                .attr("href", "#") //requires this to actually be focusable and look like a link
+                    .append(
+                        $("<img />")
+                            .attr("src", $path_to_backend + val.src)
+                            .attr("id", val.id)
+                            .attr("class", "img-fluid thumbnail")
+                    )
                 .appendTo($tn_col3)
                 .click(function() {
                     clickPhoto(val.id);
@@ -61,6 +73,17 @@ function uploadFunction()
         alert("Please enter a photo description.");
         return;
     }
+
+    //to work with the existing backend, append the tag and description together
+    var description = photoFormData.get("description");
+    var tag1 = photoFormData.get("tag1");
+    var tag2 = photoFormData.get("tag2");
+
+    //separate them by a % so we can parse later
+    var all = description + "%" + tag1 + "%" + tag2;
+
+    //replace entered description with description plus tags
+    photoFormData.set("description", all);
     
     // include the group ID
     photoFormData.append('grp_id', $grp_id);
@@ -111,13 +134,12 @@ function clickPhoto(id) {
 
     //calling viewPhoto to get the single photos and their descriptions
     $endpoint = $path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + id;
-    console.log($endpoint);
     $.getJSON($endpoint, function(data){
-
-        //this re-renders the left column with the filters. will need to be adjusted once in place
-        $("<div>")
-            .attr("class", "filter-col")
-            .appendTo($col)
+        //split the description by % to separate the tags
+        var elements = data[0].description.split('%');
+        var description = elements[0];
+        var tag1 = elements[1];
+        var tag2 = elements[2];
 
         //renders full-sized image
         $("<img />")
@@ -129,7 +151,15 @@ function clickPhoto(id) {
         //renders white description box next to image
         $("<div>")
             .append("<h2>Description</h2>")
-            .append(data[0].description)
+            .append(
+                $("<div>").text(description)
+            )
+            .append( //add the tags as separate boxes
+                $("<div>").text(tag1).addClass("tag")
+            )
+            .append( //add the tags as separate boxes
+                $("<div>").text(tag2).addClass("tag")
+            )
             .appendTo($col)
             .wrap('<div class="col-md px-2"></div>')
             .attr("class", "description p-3")

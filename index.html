@@ -15,26 +15,33 @@
 </head>
 <body>
     <div class="header p-4">
-        <img class="logo" src="muse_vector.svg"/>
+        <a href="index.html"><img class="logo" src="muse_vector.svg"/></a>
     </div>
 
     <div class="container-md p-4">
         <div class="row">
-            <div class="px-3 filter-col">
-                <h1>Filters</h1>
+            <div class="col-3 px-3 filter-col">
+                <h1>Tags</h1>
+                <form name="filterer" id="filterer" enctype="multipart/form-data">
+                    <input class="mt-2" type="text" id="search" name="search" placeholder="Search filters">
+                    <h2 class="pt-4">Fine Art</h2>
+                    <input id="sketches" name="sketches" type="checkbox"/>
+                    <label for="sketches">Sketches</label><br>
+                    <input id="painting" name="painting" type="checkbox"/>
+                    <label for="painting">Painting</label><br>
+                </form>
             </div>
-            <div class="px-2 d-flex justify-content-between post-col">
-                <h1>Posts</h1>
-                <a><i class="bi bi-plus"></i>Add new inspo</a>
+            <div class="col-9">
+                <div class="px-2 d-flex justify-content-between row">
+                    <h1>Posts</h1>
+                    <a><i class="bi bi-plus"></i>Add new inspo</a>
+                </div>
+                <div class="row" id="column_section">
+                    <div id="col1" class="col-sm px-2"></div>
+                    <div id="col2" class="col-sm px-2"></div>
+                    <div id="col3" class="col-sm px-2"></div>
+                </div>
             </div>
-        </div>
-        <div class="row" id="column_section">
-            <div class="filter-col">
-                
-            </div>
-            <div id="col1" class="col-sm px-2"></div>
-            <div id="col2" class="col-sm px-2"></div>
-            <div id="col3" class="col-sm px-2"></div>
         </div>
     </div>
 
@@ -48,6 +55,8 @@
         <input name="fupload" type="file" />
         <p><label for="description">Enter a Description: </label>
         <textarea rows="6" cols="50" id="description" name="description"></textarea></p>
+        <input type="text" id="tag1" name="tag1" placeholder="Add a tag">
+        <input type="text" id="tag2" name="tag2" placeholder="Add a tag">
         <input type="button" value="Upload Photo">
     </form>
     <progress value="" max=""></progress>

@@ -8,17 +8,27 @@
 /* 
     Attached to the img element of each thumbnail image.
     Adds a border to ensure images pop from the background.
+    White background color ensures transparent PNGs are solid.
 */
 .thumbnail {
     border-radius: 10px;
     border: 0.5px solid var(--grayish);
     width: 100%;
     margin-top: 15px;
+    background-color: white;
+}
+
+/* Darkens the images on hover and focus to indicate interaction */
+.thumbnail:hover, .thumbnail:focus {
+    filter: brightness(75%);
+    transition: filter 0.2s ease;
 }
 
 .full-image {
     border-radius: 10px;
     border: 0.5px solid var(--grayish);
+    width: 100%;
+    background-color: white;
 }
 
 .container-md {
@@ -28,6 +38,8 @@
 .header {
     background-color: white;
     position: sticky;
+    top: -10px;
+    z-index: 100;
 }
 
 .logo {
@@ -56,9 +68,19 @@ p, a {
     color: var(--maroon) !important;
 }
 
-/* The left column containing all selected filters */
 .filter-col {
-    width: 250px;
+    position: sticky !important;
+    top: 100px;
+    height: 100vh; /* Ensures it takes full height */
+    overflow-y: auto;
+}
+
+.tag {
+    border-radius: 20px;
+    border: 0.5px solid var(--grayish);
+    padding: 5px 10px 5px 10px;
+    margin-right: 5px;
+    display: inline-block;
 }
 
 /* The white description box next to a clicked image */
