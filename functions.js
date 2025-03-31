@@ -57,6 +57,11 @@ function uploadFunction()
 {
     // for data, we want to submit the photo and the description
     var photoFormData = new FormData(document.forms['uploader']);
+    if (!photoFormData.get("description").trim()) {
+        alert("Please enter a photo description.");
+        return;
+    }
+    
     // include the group ID
     photoFormData.append('grp_id', $grp_id);
     $.ajax({
@@ -89,7 +94,7 @@ function uploadFunction()
     })
     .done(function()
     {
-        alert("photo uploaded");
+        fetchPhotos();
     });
 }
 
