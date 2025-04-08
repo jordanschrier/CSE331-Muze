@@ -12,58 +12,90 @@ function fetchPhotos()
     // retrieve images from the database
     $endpoint = $path_to_backend + 'getPhotos.php?grp_id=' + $grp_id;
     $.getJSON($endpoint, function(data)
-    // divide images into 3 to separate into each column
-    // layout by column instead of row to keep varying image heights
-
     {
-        var col_length = ((data.length) / 3);
-        $.each(data, function(key, val)
-        {
-            if(key < col_length){
-                // append the images to their respective columns and trigger uploadFunction when clicked
-                // using src instead of tn_src for the higher-quality images. longer loading times though
-                $("<a>")
-                .attr("href", "#") //requires this to actually be focusable and look like a link
-                    .append(
-                        $("<img />")
-                            .attr("src", $path_to_backend + val.src)
-                            .attr("id", val.id)
-                            .attr("class", "img-fluid thumbnail")
-                    )
-                .appendTo($tn_col1)
-                .click(function() {
-                    clickPhoto(val.id);
-                });
-            }else if((key >= col_length) && key < (col_length*2)){
-                $("<a>")
-                .attr("href", "#") //requires this to actually be focusable and look like a link
-                    .append(
-                        $("<img />")
-                            .attr("src", $path_to_backend + val.src)
-                            .attr("id", val.id)
-                            .attr("class", "img-fluid thumbnail")
-                    )
-                .appendTo($tn_col2)
-                .click(function() {
-                    clickPhoto(val.id);
-                });
-            }else{
-                $("<a>")
-                .attr("href", "#") //requires this to actually be focusable and look like a link
-                    .append(
-                        $("<img />")
-                            .attr("src", $path_to_backend + val.src)
-                            .attr("id", val.id)
-                            .attr("class", "img-fluid thumbnail")
-                    )
-                .appendTo($tn_col3)
-                .click(function() {
-                    clickPhoto(val.id);
-                });
-            }
-        });
+        sortImagesIntoColumns(data, $tn_col1, $tn_col2, $tn_col3);
     });
 };
+
+/**
+ * Sorts images into three columns with roughly equal heights
+ * @param {Array} imagesData - Array of image data from the server
+ * @param {jQuery} $col1 - jQuery object for the first column,
+ * @param {jQuery} $col2 -                       second column,
+ * @param {jQuery} $col3 -                       & third column
+ */
+function sortImagesIntoColumns(imagesData, $col1, $col2, $col3) {
+    // array of column objects to track heights
+    const columns = [
+        { element: $col1, height: 0 },
+        { element: $col2, height: 0 },
+        { element: $col3, height: 0 }
+    ];
+    
+    // create image elements first to pre-calculate heights
+    const imageElements = [];
+    const imagesToLoad = imagesData.length;
+    let imagesLoaded = 0;
+    
+    // process images once they're loaded
+    $.each(imagesData, function(index, imageData) {
+        const img = new Image();
+        img.onload = function() {
+            imageElements.push({
+                data: imageData,
+                width: this.width,
+                height: this.height,
+                aspectRatio: this.width / this.height
+            });
+            
+            imagesLoaded++;
+            
+            if (imagesLoaded === imagesToLoad) {
+                //sort images by height (tallest first)
+                imageElements.sort((a, b) => b.height - a.height);
+
+                imageElements.forEach(function (imgElement) {
+                  // find the column with the shortest height
+                  let shortestColumn = columns[0];
+                  for (let i = 1; i < columns.length; i++) {
+                    if (columns[i].height < shortestColumn.height) {
+                      shortestColumn = columns[i];
+                    }
+                  }
+
+                  appendImageToColumn(imgElement.data, shortestColumn.element);
+
+                  // update the column height
+                  const estimatedHeight = 100 / imgElement.aspectRatio; // assumes 100px standard width
+                  shortestColumn.height += estimatedHeight;
+                });
+            }
+        };
+        
+        // start loading the image
+        img.src = $path_to_backend + imageData.src;
+    });
+}
+
+/**
+ * Appends an image to the specified column
+ * @param {Object} imageData - Image data from server
+ * @param {jQuery} $column - jQuery object for the column
+ */
+function appendImageToColumn(imageData, $column) {
+    $("<a>")
+        .attr("href", "#") // Required to be focusable and look like a link
+        .append(
+            $("<img />")
+                .attr("src", $path_to_backend + imageData.src)
+                .attr("id", imageData.id)
+                .attr("class", "img-fluid thumbnail")
+        )
+        .appendTo($column)
+        .click(function() {
+            clickPhoto(imageData.id);
+        });
+}
 
 function uploadFunction()
 {
@@ -165,4 +197,3 @@ function clickPhoto(id) {
             .attr("class", "description p-3")
     });
 }
-
