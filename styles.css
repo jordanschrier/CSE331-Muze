@@ -5,6 +5,28 @@
     --grayish: #4B444B;
 }
 
+/* main font formats */
+h1, h2, h3, h4, h5, h6, a {
+    font-family: "Sometype Mono", monospace;
+    font-optical-sizing: auto;
+    color: var(--grayish);
+}
+
+
+div, p, input, ul, ol, li {
+    font-family: "Roboto", monospace;
+    font-optical-sizing: auto;
+    color: var(--grayish);
+
+}
+
+
+b, strong {
+    font-weight: 600;
+}
+
+
+
 /* 
     Attached to the img element of each thumbnail image.
     Adds a border to ensure images pop from the background.
@@ -47,29 +69,32 @@
 }
 
 h1 {
-    font-family: "Sometype Mono", monospace;
-    font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-    font-size: 16pt !important;
-    color: var(--grayish) !important;
+    font-size: 16pt;
 }
 
 h2 {
-    font-family: "Sometype Mono", monospace;
-    font-optical-sizing: auto;
     font-weight: 200;
     font-style: normal;
-    font-size: 14pt !important;
-    color: var(--grayish) !important;
+    font-size: 14pt;
 }
 
 p, a {
-    color: var(--maroon) !important;
+    color: var(--maroon);
+}
+
+/* Search Related Formattings */
+
+#search {
+    border: 1px solid var(--grayish);
+    border-radius: 20px;
+    padding: 5px 10px;
+    width: calc(100% - 10px);
 }
 
 .filter-col {
-    position: sticky !important;
+    position: sticky;
     top: 100px;
     height: 100vh; /* Ensures it takes full height */
     overflow-y: auto;
@@ -94,4 +119,10 @@ p, a {
 /* Temporary fix, 'posts' and 'add new inspo' weren't aligning correctly */
 .post-col {
     width: calc(100vw - 280px);
+}
+
+/* Inspo Board Settings */
+.inspo-board {
+    margin: 0px;
+    padding-inline: 0px 40px;
 }
