@@ -41,7 +41,7 @@
             <div class="col-9 inspo-board">
                 <div class="px-2 d-flex justify-content-between row">
                     <h1>Posts</h1>
-                    <a><i class="bi bi-plus"></i>Add new inspo</a>
+                    <a href="create-inspiration/"><i class="bi bi-plus"></i>Add new inspo</a>
                 </div>
                 <div class="row" id="column_section">
                     <div id="col1" class="col-sm px-2"></div>
@@ -54,35 +54,6 @@
 
     <script type="text/javascript">
         $(document).ready(fetchPhotos);
-    </script>
-
-    <h1>Upload a Photo</h1>
-
-    <form name="uploader" id="uploader" enctype="multipart/form-data">
-        <input name="fupload" type="file" />
-        <p><label for="description">Enter a Description: </label>
-        <textarea rows="6" cols="50" id="description" name="description"></textarea></p>
-        <input type="text" id="tag1" name="tag1" placeholder="Add a tag">
-        <input type="text" id="tag2" name="tag2" placeholder="Add a tag">
-        <input type="button" value="Upload Photo">
-    </form>
-    <progress value="" max=""></progress>
-
-    <script type="text/javascript">
-        // verification for the file
-        $(':file').on('change', function() 
-        {   
-            var file = this.files[0];
-            if (file.size > 10485760)
-            {
-                alert('Max upload size is 10 MB.');
-                $(':file').val('');
-            }
-            // alert(file.name);
-            // alert(file.type);
-        });
-
-        $(':button').on('click', uploadFunction);
     </script>
 </body>
 </html>

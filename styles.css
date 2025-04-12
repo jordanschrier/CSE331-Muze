@@ -12,7 +12,6 @@ h1, h2, h3, h4, h5, h6, a {
     color: var(--grayish);
 }
 
-
 div, p, input, ul, ol, li {
     font-family: "Roboto", monospace;
     font-optical-sizing: auto;
@@ -20,12 +19,9 @@ div, p, input, ul, ol, li {
 
 }
 
-
 b, strong {
     font-weight: 600;
 }
-
-
 
 /* 
     Attached to the img element of each thumbnail image.
@@ -62,6 +58,11 @@ b, strong {
     position: sticky;
     top: -10px;
     z-index: 100;
+    height: 100px
+}
+
+.content {
+    min-height: calc(100vh - 100px);
 }
 
 .logo {
@@ -125,4 +126,9 @@ p, a {
 .inspo-board {
     margin: 0px;
     padding-inline: 0px 40px;
+}
+
+#uploader {
+    width: 800px;
+    margin-inline: auto;
 }
