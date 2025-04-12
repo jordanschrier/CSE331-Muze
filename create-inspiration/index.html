@@ -48,8 +48,11 @@
             <!-- Text Desc -->
             <textarea rows="6" id="description" name="description" placeholder="Description"></textarea>
             
-            <input id="post-button" type="button" value="Post">
-            <progress value="" max=""></progress>
+            <div id="post-button-container">
+                <div class="progress-circle" id="progressCircle"></div>
+                <input id="post-button" type="button" value="Post">
+            </div>
+            <!-- <progress value="" max=""></progress> -->
         </form>
     </div>
 
@@ -59,7 +62,8 @@
             const fileInput = document.getElementById('file-input');
             const imagePreview = document.getElementById('image-preview');
             const uploadText = document.getElementById('upload-text');
-            
+            const circle = document.getElementById('progressCircle');
+
             // Click to upload
             uploadArea.addEventListener('click', function() {
                 fileInput.click();
@@ -89,7 +93,7 @@
                 }
             });
             
-            // File handling function
+            // File handling validation
             function handleFiles(files) {
                 const file = files[0];
                 
@@ -117,7 +121,9 @@
             }
             
             $(':button').on('click', uploadFunction);
+            
         });
+
     </script>
 </body>
 </html>

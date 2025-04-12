@@ -99,10 +99,13 @@ function appendImageToColumn(imageData, $column) {
 
 function uploadFunction()
 {
+    $('#progressCircle').show();
+    
     // for data, we want to submit the photo and the description
     var photoFormData = new FormData(document.forms['uploader']);
     if (!photoFormData.get("description").trim()) {
         alert("Please enter a photo description.");
+        $('#progressCircle').hide();
         return;
     }
 
@@ -129,27 +132,16 @@ function uploadFunction()
         cache: false,
         contentType: false,
         processData: false,
-
-        // Custom XMLHttpRequest
-        xhr: function() {
-            var myXhr = $.ajaxSettings.xhr();
-            if (myXhr.upload) {
-                // For handling the progress of the upload
-                myXhr.upload.addEventListener('progress', function(e) {
-                    if (e.lengthComputable) {
-                        $('progress').attr({
-                            value: e.loaded,
-                            max: e.total,
-                        });
-                    }
-                } , false);
-            }
-            return myXhr;
-        }
     })
     .done(function()
     {
-        fetchPhotos();
+        setTimeout(function() {
+            window.location.href = "../";
+        }, 1000);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        alert("Upload failed: " + textStatus);
+        $('#progressCircle').hide();
     });
 }
 
