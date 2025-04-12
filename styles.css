@@ -2,7 +2,26 @@
 :root {
     --background: #F5F3F1;
     --maroon: #8C2F26;
+    --light-maroon: #b92f22;
     --grayish: #4B444B;
+    --light-gray: #aaaaaa;
+}
+
+/* main font formats */
+h1, h2, h3, h4, h5, h6, a {
+    font-family: "Sometype Mono", monospace;
+    font-optical-sizing: auto;
+    color: var(--grayish);
+}
+
+div, p, input, ul, ol, li {
+    font-family: "Roboto", monospace;
+    font-optical-sizing: auto;
+    color: var(--grayish);
+}
+
+b, strong {
+    font-weight: 600;
 }
 
 /* 
@@ -31,15 +50,17 @@
     background-color: white;
 }
 
-.container-md {
-    background-color: var(--background);
-}
-
 .header {
     background-color: white;
     position: sticky;
     top: -10px;
     z-index: 100;
+    height: 100px
+}
+
+.content {
+    min-height: calc(100vh - 100px);
+    background-color: var(--background);
 }
 
 .logo {
@@ -47,29 +68,32 @@
 }
 
 h1 {
-    font-family: "Sometype Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
-    font-size: 16pt !important;
-    color: var(--grayish) !important;
+    font-size: 16pt;
 }
 
 h2 {
-    font-family: "Sometype Mono", monospace;
-    font-optical-sizing: auto;
     font-weight: 200;
     font-style: normal;
-    font-size: 14pt !important;
-    color: var(--grayish) !important;
+    font-size: 14pt;
 }
 
-p, a {
-    color: var(--maroon) !important;
+a {
+    color: var(--maroon);
+}
+
+/* Search Related Formattings */
+
+#search {
+    border: 1px solid var(--light-gray);
+    border-radius: 20px;
+    padding: 5px 10px;
+    width: calc(100% - 10px);
 }
 
 .filter-col {
-    position: sticky !important;
+    position: sticky;
     top: 100px;
     height: 100vh; /* Ensures it takes full height */
     overflow-y: auto;
@@ -94,4 +118,104 @@ p, a {
 /* Temporary fix, 'posts' and 'add new inspo' weren't aligning correctly */
 .post-col {
     width: calc(100vw - 280px);
+}
+
+/* Inspo Board Settings */
+.inspo-board {
+    margin: 0px;
+    padding-inline: 0px 40px;
+}
+
+.image-upload-container {
+    width: 800px;
+    max-width: calc(100vw - 40px);
+    padding-block: 20px;
+    margin-inline: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    p {
+        margin: 0;
+    }
+    input, textarea, button {
+        border-radius: 20px;
+        border: 1px solid var(--light-gray);
+        padding: 10px;
+    }
+    .upload-area {
+        text-align: center;
+        align-content: center;
+        cursor: pointer;
+        transition: all 0.1s;
+        min-height: 140px;
+
+        border-radius: 20px;
+        border: 2px dashed var(--light-gray);
+        background-color: #dddddd;
+    }
+    .upload-area.drag-over {
+        border: 2px solid #0088dd;
+        background-color: #cceeff;
+    }
+    #file-input {
+        display: none;
+    }
+    #image-preview {
+        max-width: 100%;
+        max-height: 300px;
+        display: none;
+    }
+    .tags-container {
+        display: flex;
+        gap: 15px;
+    }
+    #post-button-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+        align-items: center;
+        gap: 10px;
+    }
+    #post-button {
+        width: 100px;
+        padding: 7px;
+        background-color: var(--maroon);
+        color: #ffffff;
+        transition: all 0.08s;
+    }
+    #post-button:hover {
+        background-color: var(--light-maroon);
+    }
+    .progress-circle {
+        width: 30px;
+        height: 30px;
+        border: 4px solid #cccccc;
+        border-radius: 50%;
+        display: none;
+        position: relative;
+        transition-property: transform;
+        transition-duration: 1s;
+    }
+    .progress-circle::after {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border: 4px solid transparent;
+        border-top-color: var(--maroon);
+        border-radius: 50%;
+        animation-name: rotate; 
+        animation-duration: 2s; 
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
 }
