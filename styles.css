@@ -3,6 +3,7 @@
     --background: #F5F3F1;
     --maroon: #8C2F26;
     --grayish: #4B444B;
+    --light-gray: #aaaaaa;
 }
 
 /* main font formats */
@@ -16,7 +17,6 @@ div, p, input, ul, ol, li {
     font-family: "Roboto", monospace;
     font-optical-sizing: auto;
     color: var(--grayish);
-
 }
 
 b, strong {
@@ -49,10 +49,6 @@ b, strong {
     background-color: white;
 }
 
-.container-md {
-    background-color: var(--background);
-}
-
 .header {
     background-color: white;
     position: sticky;
@@ -63,6 +59,7 @@ b, strong {
 
 .content {
     min-height: calc(100vh - 100px);
+    background-color: var(--background);
 }
 
 .logo {
@@ -70,7 +67,7 @@ b, strong {
 }
 
 h1 {
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     font-size: 16pt;
 }
@@ -81,14 +78,14 @@ h2 {
     font-size: 14pt;
 }
 
-p, a {
+a {
     color: var(--maroon);
 }
 
 /* Search Related Formattings */
 
 #search {
-    border: 1px solid var(--grayish);
+    border: 1px solid var(--light-gray);
     border-radius: 20px;
     padding: 5px 10px;
     width: calc(100% - 10px);
@@ -128,7 +125,58 @@ p, a {
     padding-inline: 0px 40px;
 }
 
-#uploader {
+.image-upload-container {
     width: 800px;
+    max-width: calc(100vw - 40px);
+    padding-block: 20px;
     margin-inline: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    p {
+        margin: 0;
+    }
+    input, textarea, button {
+        /* width: 100%; */
+        border-radius: 20px;
+        border: 1px solid var(--light-gray);
+        padding: 10px;
+    }
+    .upload-area {
+        text-align: center;
+        align-content: center;
+        cursor: pointer;
+        transition: all 0.1s;
+        min-height: 140px;
+
+        border-radius: 20px;
+        border: 2px dashed var(--light-gray);
+        background-color: #dddddd;
+    }
+    .upload-area.drag-over {
+        border: 2px solid #0088dd;
+        background-color: #cceeff;
+    }
+    #file-input {
+        display: none;
+    }
+    #image-preview {
+        max-width: 100%;
+        max-height: 300px;
+        display: none;
+        /* border-radius: 20px; */
+    }
+    .tags-container {
+        display: flex;
+        gap: 15px;
+    }
+    #post-button {
+        align-self: end;
+        width: 100px;
+        padding: 7px;
+        background-color: var(--maroon);
+        color: #ffffff;
+    }
 }
