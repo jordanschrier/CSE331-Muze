@@ -99,15 +99,20 @@ function appendImageToColumn(imageData, $column) {
 
 function uploadFunction()
 {
-    $('#progressCircle').show();
-    
-    // for data, we want to submit the photo and the description
+    // For the data, we want to submit the photo and the description
+    const fileInput = document.getElementById('file-input');
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Please provide an image to upload as inspiration');
+        return;
+    }
+
     var photoFormData = new FormData(document.forms['uploader']);
     if (!photoFormData.get("description").trim()) {
         alert("Please enter a photo description.");
-        $('#progressCircle').hide();
         return;
     }
+
+    $('#progressCircle').show();
 
     //to work with the existing backend, append the tag and description together
     var description = photoFormData.get("description");
