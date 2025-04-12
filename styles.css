@@ -2,6 +2,7 @@
 :root {
     --background: #F5F3F1;
     --maroon: #8C2F26;
+    --light-maroon: #b92f22;
     --grayish: #4B444B;
     --light-gray: #aaaaaa;
 }
@@ -139,7 +140,6 @@ a {
         margin: 0;
     }
     input, textarea, button {
-        /* width: 100%; */
         border-radius: 20px;
         border: 1px solid var(--light-gray);
         padding: 10px;
@@ -166,7 +166,6 @@ a {
         max-width: 100%;
         max-height: 300px;
         display: none;
-        /* border-radius: 20px; */
     }
     .tags-container {
         display: flex;
@@ -180,17 +179,15 @@ a {
         gap: 10px;
     }
     #post-button {
-        /* align-self: end; */
         width: 100px;
         padding: 7px;
         background-color: var(--maroon);
         color: #ffffff;
-        transition: all 0.1s;
+        transition: all 0.08s;
     }
     #post-button:hover {
-        background-color: var(--light-gray);
+        background-color: var(--light-maroon);
     }
-
     .progress-circle {
         width: 30px;
         height: 30px;
@@ -201,7 +198,6 @@ a {
         transition-property: transform;
         transition-duration: 1s;
     }
-    
     .progress-circle::after {
         content: '';
         position: absolute;
