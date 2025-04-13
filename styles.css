@@ -1,10 +1,12 @@
 /* main color theme */
 :root {
-    --background: #F5F3F1;
     --maroon: #8C2F26;
-    --light-maroon: #b92f22;
+    --light-maroon: #B92F22;
     --grayish: #4B444B;
-    --light-gray: #aaaaaa;
+    --light-gray: #AFAFAF;
+    --off-white: #F5F3F1;
+
+    --background: var(--off-white);
 }
 
 /* main font formats */
@@ -18,6 +20,12 @@ div, p, input, ul, ol, li {
     font-family: "Roboto", monospace;
     font-optical-sizing: auto;
     color: var(--grayish);
+}
+
+input, textarea, button {
+    border-radius: 20px;
+    border: 1px solid var(--light-gray);
+    padding: 10px 14px;
 }
 
 b, strong {
@@ -83,6 +91,10 @@ a {
     color: var(--maroon);
 }
 
+a:hover {
+    color: var(--maroon);
+}
+
 /* Search Related Formattings */
 
 #search {
@@ -98,6 +110,8 @@ a {
     height: 100vh; /* Ensures it takes full height */
     overflow-y: auto;
 }
+
+/* Individual, Detailed Post Components */
 
 .tag {
     border-radius: 20px;
@@ -119,7 +133,6 @@ a {
     margin-right: 5px;
 }
 
-/* The white description box next to a clicked image */
 .description {
     background-color: white;
     border-radius: 10px;
@@ -137,6 +150,51 @@ a {
     margin: 0px;
     padding-inline: 0px 40px;
 }
+
+/* Navbar */
+
+nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .search-bar {
+        width: calc(100vw - 580px);
+        max-width: 900px;
+        min-width: fit-content;
+        margin-inline: 12px;
+    }
+
+    .nav-links {
+        align-content: center;
+        margin-right: 10px;
+        gap: 2px;
+
+        img {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 3px;
+        }
+        span {
+            padding-inline: 4px;
+            font-weight: 500;
+            font-size: 12pt;
+        }
+        .nav-icon {
+            min-height: 30px;
+            min-width: 30px;
+            padding: 12px 14px;
+            border-radius: 20px;
+        }
+        .nav-icon:hover {
+            background-color: var(--background);
+            text-decoration: none;
+        }
+    }
+}
+
+/* Image Upload Page */
 
 .no-posts {
     padding: 20px;
@@ -159,11 +217,6 @@ a {
 
     p {
         margin: 0;
-    }
-    input, textarea, button {
-        border-radius: 20px;
-        border: 1px solid var(--light-gray);
-        padding: 10px;
     }
     .upload-area {
         text-align: center;
