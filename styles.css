@@ -39,7 +39,6 @@ b, strong {
 */
 .thumbnail {
     border-radius: 10px;
-    border: 0.5px solid var(--grayish);
     width: 100%;
     margin-top: 15px;
     background-color: white;
@@ -53,7 +52,6 @@ b, strong {
 
 .full-image {
     border-radius: 10px;
-    border: 0.5px solid var(--grayish);
     width: 100%;
     background-color: white;
 }
