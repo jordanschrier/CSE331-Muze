@@ -13,6 +13,8 @@ function fetchPhotos()
     $endpoint = $path_to_backend + 'getPhotos.php?grp_id=' + $grp_id;
     $.getJSON($endpoint, function(data)
     {
+        console.log(data);
+        
         sortImagesIntoColumns(data, $tn_col1, $tn_col2, $tn_col3);
     });
 };
@@ -52,7 +54,6 @@ function sortImagesIntoColumns(imagesData, $col1, $col2, $col3) {
             
             if (imagesLoaded === imagesToLoad) {
                 //sort images by height (tallest first)
-                imageElements.sort((a, b) => b.height - a.height);
 
                 imageElements.forEach(function (imgElement) {
                   // find the column with the shortest height
@@ -151,46 +152,9 @@ function uploadFunction()
 }
 
 /**
- * Triggers when user clicks an image to open the 'vertical view.' 
- * Currently just loads the clicked image. Must reload the page to view full gallery.
- * In the future, will ensure the clicked image is loaded first, followed by the rest 
- * of the images.
- * @param {*} id 
+ * Triggers when user clicks an image to route to the inspiration detail page
+ * @param {*} id - The photo ID to display
  */
 function clickPhoto(id) {
-    var $col = $("#column_section");
-    $col.empty();
-
-    //calling viewPhoto to get the single photos and their descriptions
-    $endpoint = $path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + id;
-    $.getJSON($endpoint, function(data){
-        //split the description by % to separate the tags
-        var elements = data[0].description.split('%');
-        var description = elements[0];
-        var tag1 = elements[1];
-        var tag2 = elements[2];
-
-        //renders full-sized image
-        $("<img />")
-            .attr("src", $path_to_backend + data[0].src)
-            .attr("class", "img-fluid full-image")
-            .appendTo($col)
-            .wrap('<div class="col-md px-2"></div>')
-
-        //renders white description box next to image
-        $("<div>")
-            .append("<h2>Description</h2>")
-            .append(
-                $("<div>").text(description)
-            )
-            .append( //add the tags as separate boxes
-                $("<div>").text(tag1).addClass("tag")
-            )
-            .append( //add the tags as separate boxes
-                $("<div>").text(tag2).addClass("tag")
-            )
-            .appendTo($col)
-            .wrap('<div class="col-md px-2"></div>')
-            .attr("class", "description p-3")
-    });
+    window.location.href = "./inspo/index.html?id=" + id;
 }
