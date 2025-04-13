@@ -382,7 +382,6 @@ nav {
     right: 10px;
     background-color: rgba(255, 255, 255, 1);
     border: none;
-    border-radius: 50%;
     width: 30px;
     height: 30px;
     display: flex;
@@ -394,24 +393,69 @@ nav {
     z-index: 10;
 }
 
-a:hover .save-to-board-btn,
-.save-to-board-btn:hover {
+.save-to-board-btn.saved {
+    opacity: 0.99 !important;
+    cursor: default;
+    background-color: white;
+    pointer-events: none;
+}
+
+.save-to-board-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+a:hover .save-to-board-btn:not(.saved),
+.save-to-board-btn:not(.saved):hover {
     opacity: 1;
     background-color: white;
 }
 
 .detail-save-btn {
-    top: 20px;
-    right: 20px;
-    opacity: 0.80;
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
     width: auto;
     height: auto;
-    border-radius: 20px;
+    /* border-radius: 20px; */
     padding: 8px 15px;
+    opacity: 1;
+    background-color: transparent;
+    color: var(--maroon);
+    /* border: 1px solid var(--maroon); */
+    transition: background-color 0.2s ease;
+}
+
+.detail-save-btn:not(.saved):hover {
+    background-color: rgba(140, 47, 38, 0.1);
 }
 
 .detail-save-btn i {
-    margin-right: 5px;
+    margin-right: 8px;
+    color: var(--maroon);
+}
+
+.detail-save-btn .add-icon,
+.detail-save-btn .checkmark-icon {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    vertical-align: text-bottom;
+}
+
+.detail-save-btn.saved {
+    opacity: 0.8;
+    cursor: default;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    pointer-events: none;
+}
+
+.board-button-wrapper {
+    margin-top: auto !important;
+    padding-top: 20px;
 }
 
 /* jQuery UI Resizable Handles */
@@ -503,27 +547,4 @@ a:hover .save-to-board-btn,
     pointer-events: auto !important; /* Force clickable */
 }
 
-/* Save confirmation message */
-.save-confirmation {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(140, 47, 38, 0.9);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: 500;
-    font-size: 14px;
-    text-align: center;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeInOut 1.5s ease;
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { opacity: 0; }
-}
+/* End of styles */

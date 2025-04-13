@@ -478,11 +478,30 @@ function makeImageDraggable(id, src) {
     // Apply draggable attributes
     $parent.attr("draggable", "true");
     
-    // Add a save button overlay if it doesn't exist
-    if (!$parent.find(".save-to-board-btn").length) {
-        const $saveBtn = $("<button>")
-            .addClass("save-to-board-btn")
-            .html('<i class="bi bi-plus-circle"></i>')
+    // Check if the image is already saved to the board
+    const savedBoard = getSavedBoard() || { items: [] };
+    const isAlreadySaved = savedBoard.items.some(item => item.id === id);
+    
+    // Remove any existing button (in case state has changed)
+    $parent.find(".save-to-board-btn").remove();
+    
+    // Ensure parent has relative positioning
+    $parent.css("position", "relative");
+    
+    // Create button with appropriate state
+    const $saveBtn = $("<button>")
+        .addClass("save-to-board-btn");
+    
+    if (isAlreadySaved) {
+        // Already saved - show checkmark
+        $saveBtn
+            .addClass("saved")
+            .html('<img src="./assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon">')
+            .prop("disabled", true);
+    } else {
+        // Not saved - show add icon
+        $saveBtn
+            .html('<img src="./assets/add-icon.svg" alt="Add" class="add-icon">')
             .on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -490,12 +509,16 @@ function makeImageDraggable(id, src) {
                 // Save the image to local storage
                 saveImageToBoard(id, src);
                 
-                // Show a brief confirmation message
-                showSaveConfirmation($parent);
+                // Update button to saved state without page refresh
+                $(this)
+                    .html('<img src="./assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon">')
+                    .addClass("saved")
+                    .prop("disabled", true);
             });
-        
-        $parent.css("position", "relative").append($saveBtn);
     }
+    
+    // Add button to parent
+    $parent.append($saveBtn);
     
     // Handle drag start
     $parent.on("dragstart", function(e) {
@@ -511,33 +534,25 @@ function makeImageDraggable(id, src) {
 }
 
 /**
- * Shows a brief confirmation message that the image was saved
- * @param {jQuery} $container - The container element where the message should appear
+ * Updates the UI elements across the site when the board changes
+ * This ensures state consistency when items are added/removed
  */
-function showSaveConfirmation($container) {
-    // Remove any existing confirmation
-    $(".save-confirmation").remove();
-    
-    // Create the confirmation element
-    const $confirmation = $("<div>")
-        .addClass("save-confirmation")
-        .text("Added to board!");
-    
-    // Add to container
-    $container.append($confirmation);
-    
-    // Remove after delay
-    setTimeout(function() {
-        $confirmation.fadeOut(300, function() {
-            $(this).remove();
-        });
-    }, 1500);
+function updateSaveButtonsUI() {
+    // If we're on the gallery page, refresh all thumbnail save buttons
+    if (window.location.pathname.indexOf("/inspo/") === -1) {
+        addSaveButtonsToGallery();
+    } 
+    // If we're on the detail page, refresh the detail save button
+    else if (typeof addSaveButtonToDetail === 'function') {
+        addSaveButtonToDetail();
+    }
 }
 
 /**
  * Saves an image to the muze board without navigating
  * @param {string} id - The image ID
  * @param {string} src - The image source URL
+ * @returns {boolean} Whether the image was added (true) or already existed (false)
  */
 function saveImageToBoard(id, src) {
     // Load the current board
@@ -547,7 +562,7 @@ function saveImageToBoard(id, src) {
     const exists = savedBoard.items.some(item => item.id === id);
     if (exists) {
         console.log("Image already on board, not adding again");
-        return;
+        return false;
     }
     
     // Get staggered position
@@ -619,6 +634,8 @@ function saveImageToBoard(id, src) {
             localStorage.setItem("muze-board", JSON.stringify(currentBoard));
         }
     }, 500);
+    
+    return true;
 }
 
 /**
@@ -645,29 +662,10 @@ function addSaveButtonToDetail() {
     
     if (!id || !src) return;
     
+    // Make the image container draggable
     const $detailContainer = $img.parent();
-    
-    // Add save button if it doesn't exist
-    if (!$detailContainer.find(".save-to-board-btn").length) {
-        const $saveBtn = $("<button>")
-            .addClass("save-to-board-btn detail-save-btn")
-            .html('<i class="bi bi-plus-circle"></i> Save to board')
-            .on('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Save the image to local storage
-                saveImageToBoard(id, src);
-                
-                // Show a brief confirmation message
-                showSaveConfirmation($detailContainer);
-            });
-        
-        $detailContainer.css("position", "relative").append($saveBtn);
-    }
-    
-    // Make the image draggable
     $detailContainer.attr("draggable", "true");
+    $detailContainer.css("position", "relative");
     
     $detailContainer.on("dragstart", function(e) {
         const imageData = {
@@ -678,6 +676,60 @@ function addSaveButtonToDetail() {
         e.originalEvent.dataTransfer.setData("application/json", JSON.stringify(imageData));
         e.originalEvent.dataTransfer.effectAllowed = "copy";
     });
+    
+    // Add save button to the description div
+    const $descriptionDiv = $(".description");
+    
+    // Apply flex layout to the description to push the button to the bottom
+    $descriptionDiv.css({
+        "display": "flex",
+        "flex-direction": "column",
+        "height": "100%"
+    });
+    
+    // Check if the image is already saved to the board
+    const savedBoard = getSavedBoard() || { items: [] };
+    const isAlreadySaved = savedBoard.items.some(item => item.id === id);
+    
+    // Remove any existing button (in case state has changed)
+    $descriptionDiv.find(".board-button-wrapper").remove();
+    
+    // Create button with appropriate state
+    const $saveBtn = $("<button>")
+        .addClass("save-to-board-btn detail-save-btn");
+    
+    if (isAlreadySaved) {
+        // Already saved - show checkmark and "Saved to board"
+        $saveBtn
+            .addClass("saved")
+            .html('<img src="../assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon"> Saved to board')
+            .prop("disabled", true);
+    } else {
+        // Not saved - show add icon and "Add to board"
+        $saveBtn
+            .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon"> Add to board')
+            .on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Save the image to local storage
+                saveImageToBoard(id, src);
+                
+                // Update button to saved state without page refresh
+                $(this)
+                    .html('<img src="../assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon"> Saved to board')
+                    .addClass("saved")
+                    .prop("disabled", true);
+            });
+    }
+    
+    // Create a wrapper div to contain the button at the bottom of the description
+    const $buttonWrapper = $("<div>")
+        .addClass("text-left mt-4 board-button-wrapper")
+        .append($saveBtn);
+        
+    // Append to the bottom of the description
+    $descriptionDiv.append($buttonWrapper);
 }
 
 /**
