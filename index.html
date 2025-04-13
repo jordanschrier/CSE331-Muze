@@ -24,14 +24,14 @@
 <body>
     <nav class="header p-4">
         <!-- Logo -->
-        <a href="./"><img class="logo" src="assets/muse_vector.svg" alt="Muze Logo"></a>
+        <a href="/"><img class="logo" src="assets/muse_vector.svg" alt="Muze Logo"></a>
         
         <!-- Search -->
         <input type="text" class="search-bar" placeholder="Search Muze">
         
         <!-- Icons -->
         <div class="nav-links">
-            <a class="nav-icon" href="../forums.html"><img src="assets/forum-icon.svg" alt="Forums"><span>Forums</span></a><a class="nav-icon" href="../inspo.html"><img src="assets/inspo-icon.svg" alt="Inspiration"><span>Inspo</span></a><a class="nav-icon" href="../profile.html"><img src="assets/profile-icon.svg" alt="Profile"></a>
+            <a class="nav-icon" href="./muze-board/"><i class="bi bi-grid-3x3-gap-fill"></i><span>Board</span></a><a class="nav-icon" href="../inspo.html"><img src="assets/inspo-icon.svg" alt="Inspiration"><span>Inspo</span></a><a class="nav-icon" href="../profile.html"><img src="assets/profile-icon.svg" alt="Profile"></a>
         </div>
     </nav>
 
@@ -64,10 +64,21 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-        fetchPhotos();
-        setupSearch();
-    });
+            fetchPhotos();
+            setupSearch();
+            
+            // Add save buttons after images are loaded
+            $(document).ajaxStop(function() {
+                // Add save buttons to all images
+                if (typeof addSaveButtonsToGallery === 'function') {
+                    addSaveButtonsToGallery();
+                }
+            });
+        });
     </script>
+    
+    <!-- Load the muze board functionality -->
+    <script src="muze-board/muze-board.js"></script>
 </body>
 </html>
 
