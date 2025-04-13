@@ -46,28 +46,41 @@ function loadInspirationDetail() {
             return;
         }
         
-        // Split the description by % to separate the tags
-        const elements = data[0].description.split('%');
-        const description = elements[0];
-        const tag1 = elements[1];
-        const tag2 = elements[2];
+        // Parse the post data using our helper function
+        const postData = parsePostData(data[0]);
+        console.log(postData);
+        
+        
+        if (!postData.isValid) {
+            $('#inspo-description').text('This post has invalid data format');
+            return;
+        }
         
         // Update the page with the photo data
-        document.title = `${description} - Muze`;
+        document.title = `${postData.description} - Muze`;
         $('#inspo-image').attr('src', $path_to_backend + data[0].src);
-        $('#inspo-description').text(description);
+        $('#inspo-description').text(postData.description);
         
         // Only show tags if they exist
-        if (tag1 && tag1.trim()) {
-            $('#tag1').text(tag1).show();
+        if (postData.tag1 && postData.tag1.trim()) {
+            $('#tag1').text(postData.tag1).show();
         } else {
             $('#tag1').hide();
         }
         
-        if (tag2 && tag2.trim()) {
-            $('#tag2').text(tag2).show();
+        if (postData.tag2 && postData.tag2.trim()) {
+            $('#tag2').text(postData.tag2).show();
         } else {
             $('#tag2').hide();
+        }
+        
+        // Optionally show legacy indicator
+        if (postData.isLegacyFormat) {
+            $('#inspo-detail').append(
+                $('<div class="col-12 mt-3">').append(
+                    $('<small class="text-muted">').text('This post uses legacy format')
+                )
+            );
         }
     })
     .fail(function() {
