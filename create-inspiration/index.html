@@ -22,9 +22,20 @@
 
 </head>
 <body>
-    <div class="header p-4">
-        <a href="../index.html"><img class="logo" src="../assets/muse_vector.svg"/></a>
-    </div>
+    <nav class="header p-4">
+        <!-- Logo -->
+        <a href="../"><img class="logo" src="../assets/muse_vector.svg" alt="Muze Logo"></a>
+        
+        <!-- Search -->
+        <input type="text" class="search-bar" placeholder="Search Muze">
+        
+        <!-- Icons -->
+        <div class="nav-links"><!--
+            --><a class="nav-icon" href="../forums/"><img src="../assets/forum-icon.svg" alt="Forums"><span>Forums</span></a><!--
+            --><a class="nav-icon" href="../"><img src="../assets/inspo-icon.svg" alt="Inspiration"><span>Find Inspo</span></a><!--
+            --><a class="nav-icon" href="../profile/"><img src="../assets/profile-icon.svg" alt="Profile"></a>
+        </div>
+    </nav>
 
     <div class="content">
         <form name="uploader" id="uploader" enctype="multipart/form-data" class="image-upload-container">
