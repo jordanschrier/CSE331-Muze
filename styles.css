@@ -138,6 +138,15 @@ a {
     padding-inline: 0px 40px;
 }
 
+.no-posts {
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--grayish);
+}
+
 .image-upload-container {
     width: 800px;
     max-width: calc(100vw - 40px);
