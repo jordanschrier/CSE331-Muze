@@ -22,7 +22,7 @@ div, p, input, ul, ol, li {
     color: var(--grayish);
 }
 
-input, textarea, button {
+input, textarea, button, .input-field {
     border-radius: 20px;
     border: 1px solid var(--light-gray);
     padding: 10px 14px;
@@ -53,7 +53,6 @@ b, strong {
 
 .full-image {
     border-radius: 10px;
-    border: 0.5px solid var(--grayish);
     width: 100%;
     background-color: white;
 }
@@ -123,15 +122,27 @@ a:hover {
     align-items: center;
     margin-bottom: 20px;
     font-weight: 500;
+    font-size: 1.25rem;
+    padding: 8px 15px;
+    color: var(--maroon);
+    transition: color 0.2s ease;
+    border-radius: 50%;
+}
+
+.back-link:hover {
+    background-color: #eee;
+    text-decoration: none;
 }
 
 .back-link i {
-    margin-right: 5px;
+    margin-right: 8px;
+    font-size: 1.4rem;
+    font-weight: 900;
 }
 
 .description {
     background-color: white;
-    border-radius: 10px;
+    border-radius: 20px;
     color: black;
     height: 100%;
 }
@@ -200,7 +211,7 @@ nav {
 .no-posts {
     padding: 20px;
     background-color: white;
-    border-radius: 10px;
+    border-radius: 20px;
     text-align: center;
     margin-top: 20px;
     color: var(--grayish);
@@ -296,10 +307,16 @@ nav {
 }
 
 /* Comments Styling */
+#inspo-detail {
+    display: flex;
+    flex-direction: row;
+}
+
 .comments-section {
     background-color: white;
-    border-radius: 10px;
     padding: 20px;
+    max-width: 800px;
+    margin: auto;
 }
 
 .comment {
@@ -335,7 +352,17 @@ nav {
 .comment-form {
     background-color: #f9f9f9;
     padding: 15px;
-    border-radius: 8px;
+}
+
+#comment-submit {
+    width: fit-content;
+    padding: 8px 12px;
+    background-color: var(--maroon);
+    color: #ffffff;
+    transition: all 0.08s;
+}
+#comment-submit:hover {
+    background-color: var(--light-maroon);
 }
 
 .no-comments {
