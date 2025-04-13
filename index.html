@@ -65,7 +65,10 @@
     </div>
 
     <script type="text/javascript">
-        $(document).ready(fetchPhotos);
+        $(document).ready(function() {
+        fetchPhotos();
+        setupSearch();
+    });
     </script>
 </body>
 </html>
