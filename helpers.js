@@ -9,6 +9,7 @@
  * @param {string} postData.description - Main description text
  * @param {string} postData.tag1 - First tag (optional)
  * @param {string} postData.tag2 - Second tag (optional)
+ * @param {Array} postData.comments - Array of comment objects (optional)
  * @returns {string} JSON string representation of post data
  */
 function writePostDataToJson(postData) {
@@ -19,10 +20,47 @@ function writePostDataToJson(postData) {
             postData.tag1 || "",
             postData.tag2 || ""
         ],
+        comments: postData.comments || [],
         createdAt: new Date().toISOString() // Adding timestamp for future sorting options
     };
     
     return JSON.stringify(jsonData);
+}
+
+/**
+ * Creates a new comment object
+ * @param {string} author - Name of the comment author
+ * @param {string} text - Comment text content
+ * @returns {Object} Comment object with author, text, and timestamp
+ */
+function createComment(author, text) {
+    return {
+        author: author || "Anonymous",
+        text: text,
+        timestamp: new Date().toISOString()
+    };
+}
+
+/**
+ * Adds a comment to a post's data
+ * @param {Object} postData - The post data object
+ * @param {string} author - Name of the comment author
+ * @param {string} text - Comment text content
+ * @returns {Object} Updated post data with new comment
+ */
+function addCommentToPostData(postData, author, text) {
+    // Create a deep copy of the post data
+    const updatedPostData = JSON.parse(JSON.stringify(postData));
+    
+    // Initialize comments array if it doesn't exist
+    if (!updatedPostData.comments) {
+        updatedPostData.comments = [];
+    }
+    
+    // Add the new comment
+    updatedPostData.comments.push(createComment(author, text));
+    
+    return updatedPostData;
 }
 
 /**
@@ -36,6 +74,7 @@ function parsePostData(backendData) {
         description: "No description available",
         tag1: "",
         tag2: "",
+        comments: [],
         isLegacyFormat: false,
         isValid: false
     };
@@ -53,6 +92,7 @@ function parsePostData(backendData) {
             description: jsonData.description || "No description available",
             tag1: (jsonData.tags && jsonData.tags[0]) || "",
             tag2: (jsonData.tags && jsonData.tags[1]) || "",
+            comments: jsonData.comments || [],
             createdAt: jsonData.createdAt,
             isLegacyFormat: false,
             isValid: true
@@ -68,6 +108,7 @@ function parsePostData(backendData) {
                     description: parts[0] || "No description available",
                     tag1: parts.length > 1 ? parts[1] : "",
                     tag2: parts.length > 2 ? parts[2] : "",
+                    comments: [], // Legacy format doesn't support comments
                     isLegacyFormat: true,
                     isValid: true
                 };
@@ -78,6 +119,7 @@ function parsePostData(backendData) {
                 description: backendData.description,
                 tag1: "",
                 tag2: "",
+                comments: [],
                 isLegacyFormat: true,
                 isValid: false
             };
@@ -85,6 +127,67 @@ function parsePostData(backendData) {
     }
     
     return defaultData;
+}
+
+/**
+ * Saves a comment to a post
+ * @param {number} postId - The ID of the post to comment on
+ * @param {string} author - Name of the comment author
+ * @param {string} text - Comment text content
+ * @returns {Promise} Promise that resolves when the comment is saved
+ */
+function saveComment(postId, author, text) {
+    return new Promise((resolve, reject) => {
+        if (!postId || !text.trim()) {
+            reject(new Error("Post ID and comment text are required"));
+            return;
+        }
+        
+        // First, get the current post data
+        const endpoint = $path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + postId;
+        
+        $.getJSON(endpoint)
+            .then(data => {
+                if (!data || data.length === 0) {
+                    reject(new Error("Post not found"));
+                    return;
+                }
+                
+                // Parse the current post data
+                const postData = parsePostData(data[0]);
+                
+                // Add the comment
+                const updatedPostData = addCommentToPostData(postData, author, text);
+                
+                // Convert post data to JSON string for the description field
+                const jsonDescription = writePostDataToJson(updatedPostData);
+
+                // Update the post on the server using the correct endpoint parameters
+                return $.ajax({
+                    url: $path_to_backend + 'updatePhoto.php',
+                    type: 'POST',
+                    data: {
+                        grp_id: $grp_id, // Required group ID
+                        id: postId,
+                        description: jsonDescription
+                    },
+                    error: function(xhr, status, error) {
+                        // Provide more specific error message
+                        if (xhr.status === 404) {
+                            throw new Error("The updatePhoto.php endpoint is not available. Comments cannot be saved.");
+                        } else {
+                            throw new Error("Error saving comment: " + error);
+                        }
+                    }
+                });
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
 }
 
 /**

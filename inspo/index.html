@@ -30,7 +30,7 @@
         <div class="container">
             <div class="row mb-4">
                 <div class="col-12">
-                    <a href="../index.html" class="back-link"><i class="bi bi-arrow-left"></i> Back to gallery</a>
+                    <a href="../" class="back-link"><i class="bi bi-arrow-left"></i> Back to gallery</a>
                 </div>
             </div>
             
@@ -49,11 +49,46 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Comments Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="comments-section">
+                        <h2>Comments</h2>
+                        <div id="comments-container" class="mb-4"></div>
+                        
+                        <form id="comment-form" class="comment-form">
+                            <div class="form-group">
+                                <label for="comment-author">Your Name (optional)</label>
+                                <input type="text" id="comment-author" class="form-control" placeholder="Anonymous">
+                            </div>
+                            <div class="form-group">
+                                <label for="comment-text">Your Comment</label>
+                                <textarea id="comment-text" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <button type="button" id="comment-submit" class="btn btn-primary">Post Comment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script type="text/javascript">
-        $(document).ready(loadInspirationDetail);
+        $(document).ready(function() {
+            // Load the inspiration detail
+            loadInspirationDetail();
+            
+            // Set up comment form submission
+            $('#comment-submit').on('click', handleCommentSubmit);
+            
+            // Allow form submission with Enter key
+            $('#comment-text').on('keydown', function(event) {
+                if (event.key === 'Enter' && event.ctrlKey) {
+                    handleCommentSubmit();
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -293,3 +293,53 @@ nav {
     from {transform: rotate(0deg);}
     to {transform: rotate(360deg);}
 }
+
+/* Comments Styling */
+.comments-section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.comment {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    margin-bottom: 10px;
+}
+
+.comment:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: var(--maroon);
+}
+
+.comment-date {
+    color: var(--light-gray);
+    font-size: 0.85em;
+}
+
+.comment-text {
+    line-height: 1.5;
+}
+
+.comment-form {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.no-comments {
+    color: var(--light-gray);
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
