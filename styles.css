@@ -121,18 +121,20 @@ nav {
     justify-content: space-between;
 
     .logo {
+        justify-self: start;
         width: 130px;
         margin-bottom: 2px;
     }
 
     .search-bar {
-        width: calc(90vw - 500px);
-        max-width: 840px;
+        width: calc(100vw - 600px);
+        max-width: 560px;
         min-width: fit-content;
-        margin-inline: 25px 10px;
+        margin-inline: clamp(20px, 100vw - 1125px, 165px) 10px;
     }
 
     .nav-links {
+        justify-self: end;
         align-content: center;
         margin-right: 10px;
         gap: 2px;
@@ -428,11 +430,6 @@ nav {
 }
 
 
-
-@media only screen and (max-width: 800px) {
-
-
-}
 /* Muze Board Styles */
 
 .muze-board-container {
@@ -692,4 +689,10 @@ a:hover .save-to-board-btn,
     pointer-events: auto !important; /* Force clickable */
 }
 
-/* End of styles */
+
+/* Responsive adjustments */
+
+@media only screen and (max-width: 768px) {
+
+
+}
