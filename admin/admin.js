@@ -1,6 +1,6 @@
 /**
  * Fetch function for the admin interface. Uses the 100x100 pixel tn_src
- * for loading efficiency since visuals are less important.
+ * for loading efficiency since visuals are less important here.
  */
 function fetchPhotos()
 {
@@ -31,8 +31,8 @@ function fetchPhotos()
  * @param {*} id - The photo ID to display
  */
 function clickPhoto(id) {
-    var $info_col = $("#image-info");
-    $info_col.empty();
+    var $info_col = $("#image-info"); 
+    $info_col.empty(); //empty the column where image data is displayed
 
     const endpoint = $path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + id;
     $.getJSON(endpoint, function(data)
@@ -40,7 +40,7 @@ function clickPhoto(id) {
         $("<img />")
             .attr("src", $path_to_backend + data[0].src)
             .attr("class", "row")
-            .css({maxHeight: "300px"})
+            .css({height: "300px"}) //keep the images semi-consistent
             .appendTo($info_col)
         
         $("<button />")
@@ -54,9 +54,28 @@ function clickPhoto(id) {
                     .text("Delete post")
             )
             .click(function() {
-                deletePhoto(id);
+                let text = "Are you sure you want to delete this?";
+                if (confirm(text) == true) { //dialog popup, avoid accidental deletion
+                    deletePhoto(id);
+                }
             })
             .appendTo($info_col)
+        
+        //displaying the description and tags by destructuring the JSON
+        $("<h2 />")
+            .text("Description")
+            .attr("class", "mt-4")
+            .appendTo($info_col)
+        $("<p />")
+            .text(JSON.parse(data[0].description).description)
+            .appendTo($info_col);
+        $("<h2 />")
+            .text("Tags")
+            .attr("class", "mt-4")
+            .appendTo($info_col)
+        $("<p />")
+            .text(JSON.parse(data[0].description).tags)
+            .appendTo($info_col);
     });
 }
 
@@ -73,25 +92,16 @@ function deletePhoto(id){
         url: $path_to_backend + 'deletePhoto.php?id=',
         type: 'POST',
         data: photoFormData,
-        
         cache: false,
         contentType: false,
         processData: false,
 
     })
-    .done(function() //let the admin know the photo was deleted
+    .done(function()
     {
         alert("Post deleted successfully.");
-        $("#image-info").empty;
+        var $info_col = $("#image-info"); 
+        $info_col.empty(); //ensure right column is cleared after deletion
         fetchPhotos();
     });
-}
-
-/**
- * Edits an image's description and/or tags through its given id
- * @param {*} id 
- * @param {string} desc
- */
-function editDesc(id, desc){
-    $endpoint = $path_to_backend + 'updatePhoto.php?id=',{id},'&description=',{desc};
 }
