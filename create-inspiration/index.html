@@ -121,6 +121,12 @@
                     return;
                 }
                 
+                // Update the file input's files
+                // (moves drag and drop to fileInput click and upload)
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                
                 // Preview image
                 const reader = new FileReader();
                 reader.onload = function(e) {
