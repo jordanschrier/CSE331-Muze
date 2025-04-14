@@ -77,6 +77,11 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            // Reset the saved count initialization flag
+            if (typeof savedCountInitialized !== 'undefined') {
+                savedCountInitialized = false;
+            }
+            
             // Load the inspiration detail
             loadInspirationDetail();
             

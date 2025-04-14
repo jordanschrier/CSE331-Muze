@@ -627,9 +627,11 @@ function updateSaveButtonsUI() {
         window.location.pathname.indexOf("/muze-board/") === -1) {
         addSaveButtonsToGallery();
     } 
-    // If we're on the detail page, refresh the detail save button
+    // If we're on the detail page, update just the save/unsave button state
+    // without recreating the entire UI
     else if (window.location.pathname.indexOf("/inspo/") !== -1) {
-        addSaveButtonToDetail();
+        // We'll update the button state directly in the timeout function below
+        // Don't call addSaveButtonToDetail() here as it recreates everything
     }
     
     // Force immediate UI refresh
@@ -790,27 +792,28 @@ function updateSavedCountUI(id, count) {
     const urlParams = getUrlParams();
     if (urlParams.id !== id) return;
     
-    // Make sure the user-actions div exists
-    if ($("#user-actions").length === 0) return;
+    // Get the count wrapper
+    const $countWrapper = $(".count-wrapper");
+    if ($countWrapper.length === 0) return;
     
-    let $countDisplay = $(".saved-count-display");
+    // Clear existing content
+    $countWrapper.empty();
     
-    // Create the element if it doesn't exist
-    if ($countDisplay.length === 0) {
-        $countDisplay = $("<div>")
-            .addClass("saved-count-display");
-        
-        // Add an icon (use the maroon colored add-icon)
-        const $icon = $("<img>")
-            .attr("src", "../assets/grid-save-icon.svg")
-            .attr("height", "24px")
-            .addClass("saved-count-icon")
-        
-        $countDisplay.append($icon);
-        
-        // Add it to the user-actions div
-        $("#user-actions").append($countDisplay);
-    }
+    // Create the saved count display
+    const $countDisplay = $("<div>")
+        .addClass("saved-count-display")
+        .attr("data-id", id);
+    
+    // Add an icon
+    const $icon = $("<img>")
+        .attr("src", "../assets/grid-save-icon.svg")
+        .attr("height", "24px")
+        .addClass("saved-count-icon")
+    
+    $countDisplay.append($icon);
+    
+    // Add to the wrapper
+    $countWrapper.append($countDisplay);
     
     // Update the text with the current count
     const $text = $countDisplay.find("span");
@@ -956,6 +959,9 @@ function addSaveButtonsToGallery() {
 /**
  * Adds a save button to the detail page image
  */
+// Track if we've already initialized the saved count display
+let savedCountInitialized = false;
+
 function addSaveButtonToDetail() {
     const $img = $("#inspo-image");
     const src = $img.attr("src");
@@ -973,19 +979,58 @@ function addSaveButtonToDetail() {
         fullSrc = $path_to_backend + src;
     }
     
-    // Show current saved count in the UI (fetch from server)
-    getSavedCount(id).then(count => {
-        updateSavedCountUI(id, count);
-    });
-    
-    // Add save button to the description div
+    // Structure the user-actions div with a consistent layout
+    // This ensures button is always on left and counter on right
     const $descriptionDiv = $("#user-actions");
+    
+    // Only initialize the layout and saved count once
+    if (!savedCountInitialized) {
+        savedCountInitialized = true;
+        
+        // Clear the div to ensure consistent order
+        $descriptionDiv.empty();
+        
+        // Add a flex container for proper layout
+        const $actionContainer = $("<div>")
+            .addClass("action-container")
+            .css({
+                "display": "flex",
+                "justify-content": "space-between",
+                "align-items": "center",
+                "width": "100%",
+                "position": "relative",
+                "margin-top": "15px"
+            });
+        
+        // Create a wrapper for the button (left side)
+        const $buttonWrapper = $("<div>")
+            .addClass("board-button-wrapper");
+        
+        // Create a wrapper for the count (right side)
+        const $countWrapper = $("<div>")
+            .addClass("count-wrapper");
+        
+        // Add both to the container in correct order
+        $actionContainer.append($buttonWrapper);
+        $actionContainer.append($countWrapper);
+        
+        // Add the container to the user-actions
+        $descriptionDiv.append($actionContainer);
+        
+        // Show current saved count in the UI (fetch from server)
+        getSavedCount(id).then(count => {
+            updateSavedCountUI(id, count);
+        });
+    }
+    
+    // Get the button wrapper for adding the save button
+    const $buttonWrapper = $descriptionDiv.find(".board-button-wrapper");
     
     // Check if the image is already saved to the board
     const isAlreadySaved = isImageOnBoard(id);
     
-    // Remove any existing button (in case state has changed)
-    $descriptionDiv.find(".board-button-wrapper").remove();
+    // Clear existing button (if any)
+    $buttonWrapper.empty();
     
     // Create button with appropriate state
     const $saveBtn = $("<button>")
@@ -1009,7 +1054,8 @@ function addSaveButtonToDetail() {
                     .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon"> Add to board')
                     .removeClass("saved");
                     
-                // Force global UI update
+                // Force global UI update but without recreating everything
+                // The updateSavedCount function will update the count display
                 updateSaveButtonsUI();
             });
     } else {
@@ -1029,18 +1075,14 @@ function addSaveButtonToDetail() {
                     .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon"> Unsave')
                     .addClass("saved");
                     
-                // Force global UI update
+                // Force global UI update but without recreating everything
+                // The updateSavedCount function will update the count display
                 updateSaveButtonsUI();
             });
     }
     
-    // Create a wrapper div to contain the button at the bottom of the description
-    const $buttonWrapper = $("<div>")
-        .addClass("text-left board-button-wrapper")
-        .append($saveBtn);
-        
-    // Append to the bottom of the description
-    $descriptionDiv.append($buttonWrapper);
+    // Add the button to the existing button wrapper
+    $buttonWrapper.append($saveBtn);
 }
 
 /**
