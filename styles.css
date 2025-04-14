@@ -70,6 +70,25 @@ a:hover {
 }
 
 
+/* turn any link into a button*/
+
+.link-button { 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 20px;
+    padding: 6px 10px;
+    img {
+        padding-right: 6px;
+    }
+}
+
+.link-button:hover {
+    text-decoration: none;
+    background-color: var(--less-white);
+}
+
+
 /* Inspo Board Page */
 
 /* 
@@ -94,6 +113,18 @@ a:hover {
 .inspo-board {
     margin: 0px;
     padding-inline: 0px 40px;
+}
+
+.add-inspo-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    img {
+        padding-right: 8px;
+    }
 }
 
 /* Search / Tag Related Formattings */
@@ -121,18 +152,20 @@ nav {
     justify-content: space-between;
 
     .logo {
+        justify-self: start;
         width: 130px;
         margin-bottom: 2px;
     }
 
     .search-bar {
-        width: calc(90vw - 500px);
-        max-width: 840px;
+        width: calc(100vw - 600px);
+        max-width: 560px;
         min-width: fit-content;
-        margin-inline: 25px 10px;
+        margin-inline: clamp(20px, 100vw - 1125px, 165px) 10px;
     }
 
     .nav-links {
+        justify-self: end;
         align-content: center;
         margin-right: 10px;
         gap: 2px;
@@ -428,11 +461,6 @@ nav {
 }
 
 
-
-@media only screen and (max-width: 800px) {
-
-
-}
 /* Muze Board Styles */
 
 .muze-board-container {
@@ -692,4 +720,10 @@ a:hover .save-to-board-btn,
     pointer-events: auto !important; /* Force clickable */
 }
 
-/* End of styles */
+
+/* Responsive adjustments */
+
+@media only screen and (max-width: 768px) {
+
+
+}
