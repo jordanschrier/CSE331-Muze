@@ -239,12 +239,23 @@ function addImageToBoard(id, src, position, size) {
         .html('<img src="../assets/cross-x-icon.svg" alt="Remove" class="cross-icon">')
         .on('click', function(e) {
             e.stopPropagation();
-            $(this).parent().remove();
-            saveBoard();
+            const imageId = $(this).parent().attr("data-id");
             
-            // Show empty message if no images left
-            if ($(".muze-board-item").length === 0) {
-                $board.append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+            if (imageId) {
+                // Use the unified removeImageFromBoard method that handles server update too
+                removeImageFromBoard(imageId, false);
+                
+                // Show empty message if no images left
+                if ($(".muze-board-item").length === 0) {
+                    $board.append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+                }
+            } else {
+                // Just remove the DOM element if no ID available
+                $(this).parent().remove();
+                saveBoard();
+                
+                // Update UI
+                updateSaveButtonsUI();
             }
         });
     
@@ -568,8 +579,10 @@ function makeImageDraggable(id, src) {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                // Remove from board
-                removeImageFromBoard(id);
+                // Remove from board and update server count
+                removeImageFromBoard(id, false);
+                
+                // No need to separately call updateSavedCount as removeImageFromBoard handles it now
                 
                 // Update button to add icon
                 $(this)
@@ -590,6 +603,9 @@ function makeImageDraggable(id, src) {
                 
                 // Save the image to local storage
                 saveImageToBoard(id, src);
+                
+                // Also directly update the saved count (increment)
+                updateSavedCount(id, 1);
                 
                 // Update button to saved state without page refresh
                 $(this)
@@ -684,9 +700,12 @@ function updateSaveButtonsUI() {
 /**
  * Removes an image from the muze board
  * @param {string} id - The image ID to remove
+ * @param {boolean} skipServerUpdate - If true, skip updating the server count (used when server update is handled separately)
  * @returns {boolean} Whether the removal was successful
  */
-function removeImageFromBoard(id) {
+function removeImageFromBoard(id, skipServerUpdate) {
+    console.log(`[DEBUG] Removing image ${id} from board, skipServerUpdate=${skipServerUpdate}`);
+    
     // Load the current board
     let savedBoard = getSavedBoard() || { items: [] };
     
@@ -696,14 +715,43 @@ function removeImageFromBoard(id) {
         return false;
     }
     
+    // If we're not skipping server update, decrement the count on the server
+    if (!skipServerUpdate) {
+        console.log(`[DEBUG] Updating server count for image ${id}`);
+        
+        // Directly update the saved count using the server method
+        $.getJSON($path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + id)
+            .then(data => {
+                if (!data || data.length === 0) return;
+                
+                const postData = parsePostData(data[0]);
+                console.log(`[DEBUG] Current count for image ${id} = ${postData.savedCount}`);
+                postData.savedCount = Math.max(0, (postData.savedCount || 0) - 1);
+                console.log(`[DEBUG] New count for image ${id} = ${postData.savedCount}`);
+                
+                return $.ajax({
+                    url: $path_to_backend + 'updatePhoto.php',
+                    type: 'POST',
+                    data: {
+                        grp_id: $grp_id,
+                        id: id,
+                        description: writePostDataToJson(postData)
+                    }
+                });
+            })
+            .then(() => {
+                console.log(`[DEBUG] Server count update successful for image ${id}`);
+            })
+            .catch(error => {
+                console.error(`[DEBUG] Error updating server count for image ${id}:`, error);
+            });
+    }
+    
     // Remove the image from the array
     savedBoard.items.splice(imageIndex, 1);
     
     // Save the updated board
     localStorage.setItem("muze-board", JSON.stringify(savedBoard));
-    
-    // Update the saved count (decrement)
-    updateSavedCount(id, -1);
     
     // Immediately update UI after saving
     updateSaveButtonsUI();
@@ -731,18 +779,22 @@ function removeImageFromBoard(id) {
  * @param {number} increment - Amount to change the count by (1 for add, -1 for remove)
  */
 function updateSavedCount(id, increment) {
+    console.log(`[DEBUG] Updating saved count for image ${id} by ${increment}`);
+    
     // Update the count on the server
     updateServerSavedCount(id, increment)
         .then(() => {
+            console.log(`[DEBUG] Server update successful for image ${id}, fetching latest count`);
             // After successfully updating on the server, fetch the latest count
             return fetchLatestCount(id);
         })
         .then(count => {
+            console.log(`[DEBUG] Latest count for image ${id} is ${count}`);
             // Update the UI with the latest count from the server
             updateSavedCountUI(id, count);
         })
         .catch(error => {
-            console.error("Error updating saved count:", error);
+            console.error(`[DEBUG] Error updating saved count for image ${id}:`, error);
         });
 }
 
@@ -892,9 +944,6 @@ function saveImageToBoard(id, src) {
         // Save the updated board
         localStorage.setItem("muze-board", JSON.stringify(savedBoard));
         
-        // Update the saved count
-        updateSavedCount(id, 1);
-        
         // Immediately update UI after saving
         updateSaveButtonsUI();
     };
@@ -924,9 +973,6 @@ function saveImageToBoard(id, src) {
             });
             
             localStorage.setItem("muze-board", JSON.stringify(currentBoard));
-            
-            // Update the saved count
-            updateSavedCount(id, 1);
             
             // Update UI to reflect changes
             updateSaveButtonsUI();
@@ -1046,17 +1092,53 @@ function addSaveButtonToDetail() {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                // Remove the image from local storage
-                removeImageFromBoard(id);
+                // First, directly decrement the saved count
+                console.log("UNSAVE: Directly updating count before removing from board");
                 
-                // Update button to unsaved state without page refresh
-                $(this)
-                    .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon"> Add to board')
-                    .removeClass("saved");
-                    
-                // Force global UI update but without recreating everything
-                // The updateSavedCount function will update the count display
-                updateSaveButtonsUI();
+                // Create a direct AJAX call to the server to update the count
+                $.getJSON($path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + id)
+                    .then(data => {
+                        if (!data || data.length === 0) return;
+                        
+                        const postData = parsePostData(data[0]);
+                        console.log("UNSAVE: Current count = " + postData.savedCount);
+                        postData.savedCount = Math.max(0, (postData.savedCount || 0) - 1);
+                        console.log("UNSAVE: New count = " + postData.savedCount);
+                        
+                        return $.ajax({
+                            url: $path_to_backend + 'updatePhoto.php',
+                            type: 'POST',
+                            data: {
+                                grp_id: $grp_id,
+                                id: id,
+                                description: writePostDataToJson(postData)
+                            }
+                        });
+                    })
+                    .then(() => {
+                        console.log("UNSAVE: Count updated, now removing from board");
+                        
+                        // After updating the count, remove from board (skip server update as we already did it)
+                        removeImageFromBoard(id, true);
+                        
+                        // Update button to unsaved state without page refresh
+                        $(this)
+                            .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon"> Add to board')
+                            .removeClass("saved");
+                            
+                        // Force global UI update but without recreating everything
+                        updateSaveButtonsUI();
+                        
+                        // Fetch the new count and update the UI
+                        return fetchLatestCount(id);
+                    })
+                    .then(count => {
+                        console.log("UNSAVE: Fetched new count: " + count);
+                        updateSavedCountUI(id, count);
+                    })
+                    .catch(error => {
+                        console.error("UNSAVE: Error updating count:", error);
+                    });
             });
     } else {
         // Not saved - show add icon and "Add to board"
@@ -1070,13 +1152,15 @@ function addSaveButtonToDetail() {
                 // Save the image to local storage
                 saveImageToBoard(id, fullSrc);
                 
+                // Also directly update the saved count (increment)
+                updateSavedCount(id, 1);
+                
                 // Update button to saved state without page refresh
                 $(this)
                     .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon"> Unsave')
                     .addClass("saved");
                     
                 // Force global UI update but without recreating everything
-                // The updateSavedCount function will update the count display
                 updateSaveButtonsUI();
             });
     }

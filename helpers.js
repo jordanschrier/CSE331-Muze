@@ -160,8 +160,14 @@ function updateServerSavedCount(postId, increment) {
                 // Parse the current post data
                 const postData = parsePostData(data[0]);
                 
+                // Log current state
+                console.log(`[SERVER DEBUG] Image ${postId} - Current saved count: ${postData.savedCount || 0}`);
+                console.log(`[SERVER DEBUG] Attempting to change by: ${increment}`);
+                
                 // Update the saved count (ensure it never goes below 0)
                 postData.savedCount = Math.max(0, (postData.savedCount || 0) + increment);
+                
+                console.log(`[SERVER DEBUG] New saved count will be: ${postData.savedCount}`);
                 
                 // Convert post data to JSON string for the description field
                 const jsonDescription = writePostDataToJson(postData);
