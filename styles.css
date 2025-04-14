@@ -70,6 +70,25 @@ a:hover {
 }
 
 
+/* turn any link into a button*/
+
+.link-button { 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 20px;
+    padding: 6px 10px;
+    img {
+        padding-right: 6px;
+    }
+}
+
+.link-button:hover {
+    text-decoration: none;
+    background-color: var(--less-white);
+}
+
+
 /* Inspo Board Page */
 
 /* 
@@ -94,6 +113,18 @@ a:hover {
 .inspo-board {
     margin: 0px;
     padding-inline: 0px 40px;
+}
+
+.add-inspo-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    img {
+        padding-right: 8px;
+    }
 }
 
 /* Search / Tag Related Formattings */
