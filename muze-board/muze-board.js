@@ -700,6 +700,9 @@ function removeImageFromBoard(id) {
     // Save the updated board
     localStorage.setItem("muze-board", JSON.stringify(savedBoard));
     
+    // Update the saved count (decrement)
+    updateSavedCount(id, -1);
+    
     // Immediately update UI after saving
     updateSaveButtonsUI();
     
@@ -718,6 +721,99 @@ function removeImageFromBoard(id) {
     }
     
     return true;
+}
+
+/**
+ * Updates the saved count for an image
+ * @param {string} id - The image ID
+ * @param {number} increment - Amount to change the count by (1 for add, -1 for remove)
+ */
+function updateSavedCount(id, increment) {
+    // Get the current saved counts from localStorage
+    let savedCounts = {};
+    const savedCountsData = localStorage.getItem("muze-saved-counts");
+    
+    if (savedCountsData) {
+        try {
+            savedCounts = JSON.parse(savedCountsData);
+        } catch (error) {
+            // Reset if data is corrupted
+            savedCounts = {};
+        }
+    }
+    
+    // Get the current count or default to 0
+    let currentCount = savedCounts[id] || 0;
+    
+    // Update the count with the increment (ensure it never goes below 0)
+    currentCount = Math.max(0, currentCount + increment);
+    
+    // Update the storage
+    savedCounts[id] = currentCount;
+    localStorage.setItem("muze-saved-counts", JSON.stringify(savedCounts));
+    
+    // Update the UI if we're on the detail page for this image
+    updateSavedCountUI(id, currentCount);
+    
+    return currentCount;
+}
+
+/**
+ * Gets the saved count for an image
+ * @param {string} id - The image ID
+ * @returns {number} The number of times the image has been saved
+ */
+function getSavedCount(id) {
+    const savedCountsData = localStorage.getItem("muze-saved-counts");
+    if (!savedCountsData) return 0;
+    
+    try {
+        const savedCounts = JSON.parse(savedCountsData);
+        return savedCounts[id] || 0;
+    } catch (error) {
+        return 0;
+    }
+}
+
+/**
+ * Updates the UI to show the saved count
+ * @param {string} id - The image ID
+ * @param {number} count - The current save count
+ */
+function updateSavedCountUI(id, count) {
+    // Only update if we're on the detail page for this image
+    const urlParams = getUrlParams();
+    if (urlParams.id !== id) return;
+    
+    // Make sure the user-actions div exists
+    if ($("#user-actions").length === 0) return;
+    
+    let $countDisplay = $(".saved-count-display");
+    
+    // Create the element if it doesn't exist
+    if ($countDisplay.length === 0) {
+        $countDisplay = $("<div>")
+            .addClass("saved-count-display");
+        
+        // Add an icon (use the maroon colored add-icon)
+        const $icon = $("<img>")
+            .attr("src", "../assets/grid-save-icon.svg")
+            .attr("height", "24px")
+            .addClass("saved-count-icon")
+        
+        $countDisplay.append($icon);
+        
+        // Add it to the user-actions div
+        $("#user-actions").append($countDisplay);
+    }
+    
+    // Update the text with the current count
+    const $text = $countDisplay.find("span");
+    if ($text.length) {
+        $text.text(`${count} saved`);
+    } else {
+        $countDisplay.append($("<span>").text(`${count} saved`));
+    }
 }
 
 /**
@@ -779,6 +875,9 @@ function saveImageToBoard(id, src) {
         // Save the updated board
         localStorage.setItem("muze-board", JSON.stringify(savedBoard));
         
+        // Update the saved count
+        updateSavedCount(id, 1);
+        
         // Immediately update UI after saving
         updateSaveButtonsUI();
     };
@@ -808,6 +907,9 @@ function saveImageToBoard(id, src) {
             });
             
             localStorage.setItem("muze-board", JSON.stringify(currentBoard));
+            
+            // Update the saved count
+            updateSavedCount(id, 1);
             
             // Update UI to reflect changes
             updateSaveButtonsUI();
@@ -856,6 +958,10 @@ function addSaveButtonToDetail() {
     if (!src.includes('http')) {
         fullSrc = $path_to_backend + src;
     }
+    
+    // Show current saved count in the UI
+    const currentCount = getSavedCount(id);
+    updateSavedCountUI(id, currentCount);
     
     // Add save button to the description div
     const $descriptionDiv = $("#user-actions");
@@ -915,7 +1021,7 @@ function addSaveButtonToDetail() {
     
     // Create a wrapper div to contain the button at the bottom of the description
     const $buttonWrapper = $("<div>")
-        .addClass("text-left mt-4 board-button-wrapper")
+        .addClass("text-left board-button-wrapper")
         .append($saveBtn);
         
     // Append to the bottom of the description
