@@ -414,25 +414,18 @@ nav {
     padding-inline: 0;
     border-radius: 20px;
     border: 1px solid var(--less-white);
-    height: 100%;
 }
 
 .full-image {
-    max-height: 100%;
-    max-width: min(100vw - 140px, 800px);
     background-color: white;
     margin: 0;
 }
 
 .description {
-    display: flex;
-    flex-direction: column;
     background-color: white;
-    height: 100%;
     padding: 0;
     border-radius: 20px;
     border: 1px solid var(--less-white);
-    max-width: 100%;
     overflow: hidden;
 }
 
