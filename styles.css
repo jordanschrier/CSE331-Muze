@@ -4,9 +4,14 @@
     --light-maroon: #B92F22;
     --grayish: #4B444B;
     --light-gray: #AFAFAF;
+    --less-white: #D0D0D0;
     --off-white: #F5F3F1;
 
     --background: var(--off-white);
+}
+
+body {
+    background-color: var(--background);
 }
 
 /* main font formats */
@@ -22,7 +27,7 @@ div, p, input, ul, ol, li {
     color: var(--grayish);
 }
 
-input, textarea, button {
+input, textarea, button, .input-field {
     border-radius: 20px;
     border: 1px solid var(--light-gray);
     padding: 10px 14px;
@@ -32,57 +37,16 @@ b, strong {
     font-weight: 600;
 }
 
-/* 
-    Attached to the img element of each thumbnail image.
-    Adds a border to ensure images pop from the background.
-    White background color ensures transparent PNGs are solid.
-*/
-.thumbnail {
-    border-radius: 10px;
-    width: 100%;
-    margin-top: 15px;
-    background-color: white;
-}
-
-/*
-
-*/
-.admin-tn{
-    border-radius: 5px;
-    width: 200px;
-    background-color: white;
-    object-fit: cover;
-    max-height: 150px;
-    align-items: center;
-}
-
-/* Darkens the images on hover and focus to indicate interaction */
-.thumbnail:hover, .thumbnail:focus {
-    filter: brightness(75%);
-    transition: filter 0.2s ease;
-}
-
-.full-image {
-    border-radius: 10px;
-    width: 100%;
-    background-color: white;
-}
-
 .header {
     background-color: white;
     position: sticky;
-    top: -10px;
+    top: 0px;
     z-index: 100;
-    height: 100px
+    height: 90px
 }
 
 .content {
-    min-height: calc(100vh - 100px);
-    background-color: var(--background);
-}
-
-.logo {
-    width: 150px;
+    min-height: calc(100vh - 90px);
 }
 
 h1 {
@@ -105,7 +69,34 @@ a:hover {
     color: var(--maroon);
 }
 
-/* Search Related Formattings */
+
+/* Inspo Board Page */
+
+/* 
+    Attached to the img element of each thumbnail image.
+    Adds a border to ensure images pop from the background.
+    White background color ensures transparent PNGs are solid.
+*/
+.thumbnail {
+    border-radius: 10px;
+    border: 0.5px solid var(--less-white);
+    width: 100%;
+    margin-top: 15px;
+    background-color: white;
+}
+
+/* Darkens the images on hover and focus to indicate interaction */
+.thumbnail:hover, .thumbnail:focus {
+    filter: brightness(75%);
+    transition: filter 0.2s ease;
+}
+
+.inspo-board {
+    margin: 0px;
+    padding-inline: 0px 40px;
+}
+
+/* Search / Tag Related Formattings */
 
 #search {
     border: 1px solid var(--light-gray);
@@ -116,48 +107,9 @@ a:hover {
 
 .filter-col {
     position: sticky;
-    top: 100px;
+    top: 114px;
     height: 100vh; /* Ensures it takes full height */
     overflow-y: auto;
-}
-
-/* Individual, Detailed Post Components */
-
-.tag {
-    border-radius: 20px;
-    border: 0.5px solid var(--grayish);
-    padding: 5px 10px 5px 10px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    display: inline-block;
-}
-
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    font-weight: 500;
-}
-
-.back-link i {
-    margin-right: 5px;
-}
-
-.description {
-    background-color: white;
-    border-radius: 10px;
-    color: black;
-    height: 100%;
-}
-
-/* Temporary fix, 'posts' and 'add new inspo' weren't aligning correctly */
-.post-col {
-    width: calc(100vw - 280px);
-}
-
-/* Inspo Board Settings */
-.inspo-board {
-    margin: 0px;
-    padding-inline: 0px 40px;
 }
 
 /* Navbar */
@@ -168,11 +120,16 @@ nav {
     align-items: center;
     justify-content: space-between;
 
+    .logo {
+        width: 130px;
+        margin-bottom: 2px;
+    }
+
     .search-bar {
-        width: calc(100vw - 580px);
-        max-width: 900px;
+        width: calc(90vw - 500px);
+        max-width: 840px;
         min-width: fit-content;
-        margin-inline: 12px;
+        margin-inline: 25px 10px;
     }
 
     .nav-links {
@@ -188,7 +145,7 @@ nav {
         span {
             padding-inline: 4px;
             font-weight: 500;
-            font-size: 12pt;
+            font-size: 16.5px;
         }
         .nav-icon {
             min-height: 30px;
@@ -208,7 +165,7 @@ nav {
 .no-posts {
     padding: 20px;
     background-color: white;
-    border-radius: 10px;
+    border-radius: 20px;
     text-align: center;
     margin-top: 20px;
     color: var(--grayish);
@@ -236,7 +193,7 @@ nav {
 
         border-radius: 20px;
         border: 2px dashed var(--light-gray);
-        background-color: #dddddd;
+        background-color: var(--less-white);
     }
     .upload-area.drag-over {
         border: 2px solid #0088dd;
@@ -265,7 +222,7 @@ nav {
         width: 100px;
         padding: 7px;
         background-color: var(--maroon);
-        color: #ffffff;
+        color: white;
         transition: all 0.08s;
     }
     #post-button:hover {
@@ -274,7 +231,7 @@ nav {
     .progress-circle {
         width: 30px;
         height: 30px;
-        border: 4px solid #cccccc;
+        border: 4px solid var(--less-white);
         border-radius: 50%;
         display: none;
         position: relative;
@@ -303,6 +260,179 @@ nav {
     to {transform: rotate(360deg);}
 }
 
+
+/* Individual, Detailed Post Components */
+
+.tag {
+    border-radius: 20px;
+    border: 0.5px solid var(--grayish);
+    padding: 5px 10px 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 1.25rem;
+    padding: 8px 8px;
+    color: var(--maroon);
+    transition: all 0.1s ease;
+    border-radius: 20px;
+}
+
+.back-link:hover {
+    background-color: var(--less-white);
+    text-decoration: none;
+}
+
+.image-content {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    max-height: 100%;
+    width: min-content;
+}
+
+.image-container {
+    background-color: white;
+    overflow: hidden;
+    align-content: center;
+    padding-inline: 0;
+    border-radius: 20px;
+    border: 1px solid var(--less-white);
+    height: 100%;
+    min-width: min(100vw - 135px, 600px);
+}
+
+.full-image {
+    max-height: 100%;
+    width: 100%;
+    background-color: white;
+    margin: 0;
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    max-height: 100%;
+    padding: 0;
+    border-radius: 20px;
+    border: 1px solid var(--less-white);
+    max-width: 100%;
+    position: relative; /* For absolute positioning of the saved count */
+}
+
+/* Styling for the saved count display */
+.saved-count-display {
+    font-size: 14px;
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: 500;
+}
+
+.saved-count-display img,
+.saved-count-icon {
+    color: var(--maroon);
+    padding-right: 6px;
+}
+
+#user-actions {
+    margin-top: -12px;
+    padding: 0px 1rem 1rem 1rem;
+    position: relative; /* For absolute positioning of the saved count */
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+/* Comments Styling */
+
+#inspo-detail {
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 140px);
+    justify-content: center;
+    padding-right: 50px;
+    gap: 10px;
+}
+
+.comments-container {
+    overflow-y: scroll;
+    flex: 1;
+    padding-inline: 20px;
+    border-block: 1px solid var(--less-white);
+}
+
+.comment {
+    border-bottom: 1px solid #eeeeee;
+    padding: 15px 0;
+    margin-bottom: 10px;
+}
+
+.comment:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: var(--maroon);
+}
+
+.comment-date {
+    color: var(--light-gray);
+    font-size: 0.85em;
+}
+
+.comment-text {
+    line-height: 1.5;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+}
+
+#comment-submit {
+    width: fit-content;
+    padding: 8px 12px;
+    background-color: var(--maroon);
+    color: white;
+    transition: all 0.08s;
+    margin-left: auto;
+}
+#comment-submit:hover {
+    background-color: var(--light-maroon);
+}
+
+.no-comments {
+    color: var(--light-gray);
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
+
+
+
+@media only screen and (max-width: 800px) {
+
+
+}
 /* Muze Board Styles */
 
 .muze-board-container {
@@ -373,6 +503,12 @@ nav {
     z-index: 100;
 }
 
+.remove-image-btn .cross-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--maroon);
+}
+
 .muze-board-item:hover .remove-image-btn {
     opacity: 0.7;
 }
@@ -407,18 +543,19 @@ nav {
 
 .save-to-board-btn.saved {
     opacity: 0.99 !important;
-    cursor: default;
     background-color: white;
-    pointer-events: none;
 }
 
-.save-to-board-btn img {
+.save-to-board-btn img,
+.save-to-board-btn i {
     width: 16px;
     height: 16px;
+    color: var(--maroon);
+    margin: 0;
 }
 
-a:hover .save-to-board-btn:not(.saved),
-.save-to-board-btn:not(.saved):hover {
+a:hover .save-to-board-btn,
+.save-to-board-btn:hover {
     opacity: 1;
     background-color: white;
 }
@@ -428,7 +565,6 @@ a:hover .save-to-board-btn:not(.saved),
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
     width: auto;
     height: auto;
     /* border-radius: 20px; */
@@ -450,7 +586,8 @@ a:hover .save-to-board-btn:not(.saved),
 }
 
 .detail-save-btn .add-icon,
-.detail-save-btn .checkmark-icon {
+.detail-save-btn .checkmark-icon,
+.detail-save-btn .cross-icon {
     margin-right: 8px;
     width: 18px;
     height: 18px;
@@ -458,16 +595,12 @@ a:hover .save-to-board-btn:not(.saved),
 }
 
 .detail-save-btn.saved {
-    opacity: 0.8;
-    cursor: default;
-    background-color: transparent !important;
-    border-color: transparent !important;
-    pointer-events: none;
+    opacity: 0.9;
+    background-color: rgba(140, 47, 38, 0.1);
 }
 
 .board-button-wrapper {
     margin-top: auto !important;
-    padding-top: 20px;
 }
 
 /* jQuery UI Resizable Handles */

@@ -48,12 +48,15 @@ function loadInspirationDetail() {
         
         // Parse the post data using our helper function
         const postData = parsePostData(data[0]);
-        console.log(postData);
-        
         
         if (!postData.isValid) {
             $('#inspo-description').text('This post has invalid data format');
             return;
+        }
+        
+        // Log legacy format warning for debugging purposes
+        if (postData.isLegacyFormat) {
+            console.warn('Post is using legacy data format. Comments are not supported for legacy posts.');
         }
         
         // Update the page with the photo data
@@ -82,8 +85,100 @@ function loadInspirationDetail() {
                 )
             );
         }
+        
+        // Store the post ID for comment submission
+        $('#comment-form').data('post-id', id);
+        
+        // Only show comments section for modern format posts
+        if (postData.isLegacyFormat) {
+            $('#comments-container').html(
+                '<div class="alert alert-warning">' +
+                'Comments are not available for legacy posts. New posts support comments.' +
+                '</div>'
+            );
+            // Disable the comment form for legacy posts
+            $('#comment-form').find('input, textarea, button').prop('disabled', true);
+        } else {
+            // Display comments for modern format posts
+            displayComments(postData.comments);
+        }
     })
     .fail(function() {
         $('#inspo-description').text('Error loading photo');
     });
+}
+
+/**
+ * Displays comments for a post
+ * @param {Array} comments - Array of comment objects
+ */
+function displayComments(comments) {
+    const $commentsContainer = $('#comments-container');
+    $commentsContainer.empty();
+    
+    if (!comments || comments.length === 0) {
+        $commentsContainer.append(
+            $('<p class="no-comments">').text('No comments yet. Be the first to comment!')
+        );
+        return;
+    }
+    
+    // Sort comments by timestamp, newest first
+    const sortedComments = [...comments].sort((a, b) => {
+        return new Date(b.timestamp) - new Date(a.timestamp);
+    });
+    
+    // Add each comment to the container
+    sortedComments.forEach(comment => {
+        const commentDate = new Date(comment.timestamp);
+        const formattedDate = commentDate.toLocaleDateString() + ' ' + commentDate.toLocaleTimeString();
+        
+        const $commentEl = $('<div class="comment">').append(
+            $('<div class="comment-header">').append(
+                $('<span class="comment-author">').text(comment.author),
+                $('<span class="comment-date">').text(formattedDate)
+            ),
+            $('<div class="comment-text">').text(comment.text)
+        );
+        
+        $commentsContainer.append($commentEl);
+    });
+}
+
+/**
+ * Handles comment form submission
+ */
+function handleCommentSubmit() {
+    const postId = $('#comment-form').data('post-id');
+    const author = $('#comment-author').val().trim() || 'Anonymous';
+    const text = $('#comment-text').val().trim();
+    
+    if (!text) {
+        alert('Please enter a comment');
+        return;
+    }
+    
+    // Disable the submit button and show loading state
+    $('#comment-submit').prop('disabled', true).text('Posting...');
+    
+    // Save the comment
+    saveComment(postId, author, text)
+        .then(() => {
+            // Clear the form
+            $('#comment-text').val('');
+            
+            // Reload the post data to get the updated comments
+            loadInspirationDetail();
+            
+            // Show success message
+            alert('Comment posted successfully!');
+        })
+        .catch(error => {
+            // Show error message
+            alert('Failed to post comment: ' + error.message);
+        })
+        .finally(() => {
+            // Re-enable the submit button
+            $('#comment-submit').prop('disabled', false).text('Post Comment');
+        });
 }
