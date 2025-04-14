@@ -61,6 +61,12 @@ h2 {
     font-size: 14pt;
 }
 
+h3 {
+    font-weight: 200;
+    font-style: normal;
+    font-size: 14pt;
+}
+
 a {
     color: var(--maroon);
 }
@@ -194,6 +200,7 @@ a:hover {
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 15px;
+    margin-top: 5px;
 }
 
 .selected-tag {
