@@ -42,11 +42,7 @@
             <div class="col-3 px-3 filter-col">
                 <h1>Tags</h1>
                 <!-- Search for tags -->
-<<<<<<< HEAD
-                <input type="text" id="search" placeholder="Search tags..." class="mt-2 mb-3">
-=======
                 <input type="text" id="search" placeholder="Search tags...">
->>>>>>> tagSelection-filtering
                 
                 <!-- Selected tags will appear here -->
                 <div id="selected-tags" class="selected-tags"></div>
@@ -161,6 +157,7 @@
         $(document).ready(function() {
             fetchPhotos();
             setupSearch();
+            tagFiltering();
             tagFiltering();
             
             // Add save buttons after images are loaded
