@@ -41,16 +41,102 @@
         <div class="row">
             <div class="col-3 px-3 filter-col">
                 <h1>Tags</h1>
-                <form name="filterer" id="filterer" enctype="multipart/form-data">
-                    <input class="mt-2" type="text" id="search" name="search" placeholder="Search filters">
-                    <h2 class="pt-4">Fine Art</h2>
-                    <input id="sketches" name="sketches" type="checkbox"/>
-                    <label for="sketches">Sketches</label><br>
-                    <input id="painting" name="painting" type="checkbox"/>
-                    <label for="painting">Painting</label><br>
-                </form>
+                <!-- Search for tags -->
+                <input type="text" id="search" placeholder="Search tags...">
+                
+                <!-- Selected tags will appear here -->
+                <div id="selected-tags" class="selected-tags"></div>
+                
+                <!-- Art Type -->
+                <!-- Tag Categories -->
+                <div class="tag-category">
+                    <h3>Art Type</h3>
+                    <div class="tag-items">
+                        <div class="tag-item" data-tag="Painting">Painting</div>
+                        <div class="tag-item" data-tag="Sketches">Sketches</div>
+                        <div class="tag-item" data-tag="Drawing">Drawing</div>
+                        <div class="tag-item" data-tag="Sculpture">Sculpture</div>
+                        <div class="tag-item" data-tag="Watercolor">Watercolor</div>
+                        <div class="tag-item" data-tag="Digital">Digital</div>
+                        <div class="tag-item" data-tag="Photography">Photography</div>
+                        <div class="tag-item" data-tag="Illustration">Illustration</div>
+                        <div class="tag-item" data-tag="Film">Film</div>
+                        <div class="tag-item" data-tag="Theatre">Theatre</div>
+                        <div class="tag-item" data-tag="Printmaking">Printmaking</div>
+                        <div class="tag-item" data-tag="Collage">Collage</div>
+                        <div class="tag-item" data-tag="Mosiac">Mosiac</div>
+                        <div class="tag-item" data-tag="Fiber">Fiber</div>
+                    </div>
+                </div>
+                
+                <div class="tag-category">
+                    <h3>Photography</h3>
+                    <div class="tag-items">
+                        <div class="tag-item" data-tag="Portrait">Portrait</div>
+                        <div class="tag-item" data-tag="Landscape">Landscape</div>
+                        <div class="tag-item" data-tag="Street">Street</div>
+                        <div class="tag-item" data-tag="Nature">Nature</div>
+                        <div class="tag-item" data-tag="Architecture">Architecture</div>
+                        <div class="tag-item" data-tag="Sports">Sports</div>
+                        <div class="tag-item" data-tag="Fashion">Fashion</div>
+                        <div class="tag-item" data-tag="Candid">Candid</div>
+                        <div class="tag-item" data-tag="Still-life">Still-life</div>
+                    </div>
+                </div>
+                
+                <div class="tag-category">
+                    <h3>Digital</h3>
+                    <div class="tag-items">
+                        <div class="tag-item" data-tag="Graphic Design">Graphic Design</div>
+                        <div class="tag-item" data-tag="UI/UX">UI/UX</div>
+                        <div class="tag-item" data-tag="3D">3D</div>
+                        <div class="tag-item" data-tag="Animation">Animation</div>
+                        <div class="tag-item" data-tag="Vector"> Vector</div>
+                    </div>
+                </div>
+
+                <div class="tag-category">
+                    <h3>Technology</h3>
+                    <div class="tag-items">
+                        <div class="tag-item" data-tag="Computer Graphics">Computer Graphics</div>
+                        <div class="tag-item" data-tag="Robotics">Robotics</div>
+                        <div class="tag-item" data-tag="Game Design">Game Design</div>
+                        <div class="tag-item" data-tag="Interface">Interface</div>
+                        <div class="tag-item" data-tag="Mobile Dev">Mobile Dev</div>
+                        <div class="tag-item" data-tag="IOT">Internet of Things (IoT)</div>
+                        <div class="tag-item" data-tag="Web Dev">Web Dev</div>
+                        <div class="tag-item" data-tag="3D Printing">3D Printing</div>
+                        <div class="tag-item" data-tag="VR">Virtual Reality (VR)</div>
+                        <div class="tag-item" data-tag="AR">Augmented Reality (AR)</div>
+                    </div>
+                </div>
+                
+                <div class="tag-category">
+                    <h3>Themes</h3>
+                    <div class="tag-items">
+                        <div class="tag-item" data-tag="Abstract">Abstract</div>
+                        <div class="tag-item" data-tag="Modern">Modern</div>
+                        <div class="tag-item" data-tag="Minimalist">Minimalist</div>
+                        <div class="tag-item" data-tag="Vintage">Vintage</div>
+                        <div class="tag-item" data-tag="Surreal">Surreal</div>
+                        <div class="tag-item" data-tag="Geometric">Geometric</div>
+                    </div>
+                </div>
+                
+                <div class="tag-category">
+                    <h3>Colors</h3>
+                    <div class="tag-items">
+                        <div class="tag-item" data-tag="Red">Red</div>
+                        <div class="tag-item" data-tag="Blue">Blue</div>
+                        <div class="tag-item" data-tag="Green">Green</div>
+                        <div class="tag-item" data-tag="Yellow">Yellow</div>
+                        <div class="tag-item" data-tag="Purple">Purple</div>
+                        <div class="tag-item" data-tag="Monochrome">Monochrome</div>
+                        <div class="tag-item" data-tag="Multi-colored">Multicolored</div>
+                    </div>
+                </div>
             </div>
-            <div class="col-9 inspo-board">
+            <div class="inspo-board">
                 <div class="px-2 d-flex justify-content-between row">
                     <h1>Posts</h1>
                     <a class="add-inspo-button" href="create-inspiration/">
@@ -71,6 +157,7 @@
         $(document).ready(function() {
             fetchPhotos();
             setupSearch();
+            tagFiltering();
             
             // Add save buttons after images are loaded
             $(document).ajaxStop(function() {

@@ -61,6 +61,12 @@ h2 {
     font-size: 14pt;
 }
 
+h3 {
+    font-weight: 200;
+    font-style: normal;
+    font-size: 14pt;
+}
+
 a {
     color: var(--maroon);
 }
@@ -111,8 +117,9 @@ a:hover {
 }
 
 .inspo-board {
+    flex: 1;
     margin: 0px;
-    padding-inline: 0px 40px;
+    padding-inline: 20px;
 }
 
 .add-inspo-button {
@@ -132,16 +139,86 @@ a:hover {
 #search {
     border: 1px solid var(--light-gray);
     border-radius: 20px;
-    padding: 5px 10px;
-    width: calc(100% - 10px);
+    padding: 6px 10px;
+    width: 100%;
+    min-width: 100px;
 }
 
 .filter-col {
     position: sticky;
-    top: 114px;
-    height: 100vh; /* Ensures it takes full height */
+    top: 90px;
+    height: calc(100vh - 90px); /* Ensures it takes full height */
+    width: fit-content;
+    max-width: 280px;
     overflow-y: auto;
+    
+    scrollbar-width: none;    /* hides scrollbar in Firefox */
+    -ms-overflow-style: none; /* hides scrollbar in IE and Edge */
 }
+
+.filter-col::-webkit-scrollbar {
+    display: none;
+}
+
+/* Gallery page tag filtering styles */
+
+.tag-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tag-category {
+    margin-bottom: 10px;
+}
+
+.content > .row > .filter-col .tag-item {
+    display: block;
+    padding: 6px 12px;
+    margin-bottom: 2px;
+    border-radius: 20px;
+    background-color: #e4e4e4;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.content > .row > .filter-col .tag-item:hover {
+    background-color: var(--less-white);
+}
+
+.content > .row > .filter-col .tag-item.active {
+    background-color: rgba(140, 47, 38, 0.15);
+    border: 1px solid var(--maroon);
+    color: var(--maroon);
+    font-weight: 500;
+}
+
+/* Selected tags on filter */
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.selected-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--maroon);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 14px;
+}
+
+.remove-tag {
+    margin-left: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
 
 /* Navbar */
 
@@ -326,6 +403,8 @@ nav {
     flex-direction: row;
     align-items: flex-start;
     gap: 10px;
+    height: 100%;
+    width: min-content;
 }
 
 .image-container {

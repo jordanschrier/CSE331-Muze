@@ -16,9 +16,12 @@
     
     <!-- Local Stylesheets and JS -->
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="tags.css">
     <script src="../config.js"></script>
     <script src="../helpers.js"></script>
     <script src="../functions.js"></script>
+    <script src="tags.js"></script>
+
 
 </head>
 <body>
@@ -30,10 +33,8 @@
         <input type="text" class="search-bar" placeholder="Search Muze">
         
         <!-- Icons -->
-        <div class="nav-links"><!--
-            --><a class="nav-icon" href="../muze-board/"><img src="../assets/grid.svg" alt="Inspiration"><span>Board</span></a><!--
-            --><a class="nav-icon" href="../"><img src="../assets/inspo-icon.svg" alt="Inspiration"><span>Find Inspo</span></a><!--
-            --><a class="nav-icon" href="../profile/"><img src="../assets/profile-icon.svg" alt="Profile"></a>
+        <div class="nav-links">
+            <a class="nav-icon" href="../muze-board/"><i class="bi bi-grid-3x3-gap-fill"></i><span>Board</span></a><a class="nav-icon" href="../"><img src="../assets/inspo-icon.svg" alt="Inspiration"><span>Inspo</span></a><a class="nav-icon" href="../profile.html"><img src="../assets/profile-icon.svg" alt="Profile"></a>
         </div>
     </nav>
 
@@ -50,15 +51,117 @@
                 </div>
                 <input type="file" id="file-input" name="fupload" accept="image/*">
             </div>
-            
-            <!-- Tags -->
-            <div class="tags-container">
-                <input type="text" id="tag1" name="tag1" placeholder="Add a tag">
-                <input type="text" id="tag2" name="tag2" placeholder="Add a tag">
+
+            <!-- Tag Selection -->
+            <div class="tag-container">
+                <h2>Tags</h2>
+                <!-- Note: Changed to div to prevent form submission -->
+                <div class="tag-toggle" id="tag-toggle">
+                    <i class="bi bi-plus-circle"></i>Select Tags (Choose up to 2)
+                </div>
+                
+                <div class="tag-list" id="tag-list">
+                    <input type="text" class="tag-search" id="tag-search" placeholder="Search tags...">
+                    
+                    <!-- Tag Categories -->
+                    <div class="tag-category">
+                        <h3>Art Type</h3>
+                        <div class="tag-items">
+                            <div class="tag-item" data-tag="Painting">Painting</div>
+                            <div class="tag-item" data-tag="Sketches">Sketches</div>
+                            <div class="tag-item" data-tag="Drawing">Drawing</div>
+                            <div class="tag-item" data-tag="Sculpture">Sculpture</div>
+                            <div class="tag-item" data-tag="Watercolor">Watercolor</div>
+                            <div class="tag-item" data-tag="Digital">Digital</div>
+                            <div class="tag-item" data-tag="Photography">Photography</div>
+                            <div class="tag-item" data-tag="Illustration">Illustration</div>
+                            <div class="tag-item" data-tag="Film">Film</div>
+                            <div class="tag-item" data-tag="Theatre">Theatre</div>
+                            <div class="tag-item" data-tag="Printmaking">Printmaking</div>
+                            <div class="tag-item" data-tag="Collage">Collage</div>
+                            <div class="tag-item" data-tag="Mosaic">Mosaic</div>
+                            <div class="tag-item" data-tag="Fiber">Fiber</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-category">
+                        <h3>Photography</h3>
+                        <div class="tag-items">
+                            <div class="tag-item" data-tag="Portrait">Portrait</div>
+                            <div class="tag-item" data-tag="Landscape">Landscape</div>
+                            <div class="tag-item" data-tag="Street">Street</div>
+                            <div class="tag-item" data-tag="Nature">Nature</div>
+                            <div class="tag-item" data-tag="Architecture">Architecture</div>
+                            <div class="tag-item" data-tag="Sports">Sports</div>
+                            <div class="tag-item" data-tag="Fashion">Fashion</div>
+                            <div class="tag-item" data-tag="Candid">Candid</div>
+                            <div class="tag-item" data-tag="Still-life">Still-life</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-category">
+                        <h3>Digital</h3>
+                        <div class="tag-items">
+                            <div class="tag-item" data-tag="Graphic Design">Graphic Design</div>
+                            <div class="tag-item" data-tag="UI/UX">UI/UX</div>
+                            <div class="tag-item" data-tag="3D">3D</div>
+                            <div class="tag-item" data-tag="Animation">Animation</div>
+                            <div class="tag-item" data-tag="Vector"> Vector</div>
+                        </div>
+                    </div>
+
+                    <div class="tag-category">
+                        <h3>Technology</h3>
+                        <div class="tag-items">
+                            <div class="tag-item" data-tag="Computer Graphics">Computer Graphics</div>
+                            <div class="tag-item" data-tag="Robotics">Robotics</div>
+                            <div class="tag-item" data-tag="Game Design">Game Design</div>
+                            <div class="tag-item" data-tag="Interface">Interface</div>
+                            <div class="tag-item" data-tag="Mobile Dev">Mobile Dev</div>
+                            <div class="tag-item" data-tag="IOT">Internet of Things (IoT)</div>
+                            <div class="tag-item" data-tag="Web Dev">Web Dev</div>
+                            <div class="tag-item" data-tag="3D Printing">3D Printing</div>
+                            <div class="tag-item" data-tag="VR">Virtual Reality (VR)</div>
+                            <div class="tag-item" data-tag="AR">Augmented Reality (AR)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-category">
+                        <h3>Themes</h3>
+                        <div class="tag-items">
+                            <div class="tag-item" data-tag="Abstract">Abstract</div>
+                            <div class="tag-item" data-tag="Modern">Modern</div>
+                            <div class="tag-item" data-tag="Minimalist">Minimalist</div>
+                            <div class="tag-item" data-tag="Vintage">Vintage</div>
+                            <div class="tag-item" data-tag="Surreal">Surreal</div>
+                            <div class="tag-item" data-tag="Geometric">Geometric</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-category">
+                        <h3>Colors</h3>
+                        <div class="tag-items">
+                            <div class="tag-item" data-tag="Red">Red</div>
+                            <div class="tag-item" data-tag="Blue">Blue</div>
+                            <div class="tag-item" data-tag="Green">Green</div>
+                            <div class="tag-item" data-tag="Yellow">Yellow</div>
+                            <div class="tag-item" data-tag="Purple">Purple</div>
+                            <div class="tag-item" data-tag="Monochrome">Monochrome</div>
+                            <div class="tag-item" data-tag="Multi-colored">Multicolored</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="selected-tags" id="selected-tags"></div>
+                
+                <!-- Hidden inputs for tags -->
+                <input type="hidden" id="tag1" name="tag1" value="">
+                <input type="hidden" id="tag2" name="tag2" value="">
             </div>
 
             <!-- Text Desc -->
             <textarea rows="6" id="description" name="description" placeholder="Description"></textarea>
+
             
             <div id="post-button-container">
                 <div class="progress-circle" id="progressCircle"></div>
