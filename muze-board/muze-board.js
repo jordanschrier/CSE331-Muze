@@ -18,7 +18,7 @@ function loadSavedImages() {
 
     // No saved images
     if (!savedBoard || !savedBoard.items || savedBoard.items.length === 0) {
-        $board.append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+        $board.append('<div class="empty-board-message">Save images on posts to create your muze board</div>');
         return;
     }
     
@@ -247,7 +247,7 @@ function addImageToBoard(id, src, position, size) {
                 
                 // Show empty message if no images left
                 if ($(".muze-board-item").length === 0) {
-                    $board.append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+                    $board.append('<div class="empty-board-message">Save images on posts to create your muze board</div>');
                 }
             } else {
                 // Just remove the DOM element if no ID available
@@ -532,7 +532,7 @@ function clearMuzeBoard() {
     // If we're on the muze board page, update the UI immediately
     if (window.location.pathname.includes("/muze-board/")) {
         // Clear DOM elements
-        $("#muze-board").empty().append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+        $("#muze-board").empty().append('<div class="empty-board-message">Save images on posts to create your muze board</div>');
     }
     
     // Update all save button states
@@ -581,8 +581,6 @@ function makeImageDraggable(id, src) {
                 
                 // Remove from board and update server count
                 removeImageFromBoard(id, false);
-                
-                // No need to separately call updateSavedCount as removeImageFromBoard handles it now
                 
                 // Update button to add icon
                 $(this)
@@ -638,18 +636,6 @@ function makeImageDraggable(id, src) {
  * This ensures state consistency when items are added/removed
  */
 function updateSaveButtonsUI() {
-    // If we're on the gallery page, refresh all thumbnail save buttons
-    if (window.location.pathname.indexOf("/inspo/") === -1 && 
-        window.location.pathname.indexOf("/muze-board/") === -1) {
-        addSaveButtonsToGallery();
-    } 
-    // If we're on the detail page, update just the save/unsave button state
-    // without recreating the entire UI
-    else if (window.location.pathname.indexOf("/inspo/") !== -1) {
-        // We'll update the button state directly in the timeout function below
-        // Don't call addSaveButtonToDetail() here as it recreates everything
-    }
-    
     // Force immediate UI refresh
     // This is needed because sometimes the DOM updates don't reflect immediately
     setTimeout(function() {
@@ -767,7 +753,7 @@ function removeImageFromBoard(id, skipServerUpdate) {
     
     // Show empty message if no images left on the board
     if ($(".muze-board-item").length === 0 && $("#muze-board").length > 0) {
-        $("#muze-board").append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+        $("#muze-board").append('<div class="empty-board-message">Save images on posts to create your muze board</div>');
     }
     
     return true;
@@ -983,23 +969,6 @@ function saveImageToBoard(id, src) {
     updateSaveButtonsUI();
     
     return true;
-}
-
-/**
- * Adds save buttons to all images in the gallery
- */
-function addSaveButtonsToGallery() {
-    // Select all images on the main page
-    $(".thumbnail").each(function() {
-        const $img = $(this);
-        const id = $img.attr("id");
-        const src = $img.attr("src");
-        
-        // Make sure the source URL is complete
-        const fullSrc = src.includes('http') ? src : $path_to_backend + src;
-        
-        makeImageDraggable(id, fullSrc);
-    });
 }
 
 /**
