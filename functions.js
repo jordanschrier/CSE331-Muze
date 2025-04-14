@@ -245,6 +245,8 @@ function uploadFunction()
     };
     
     // Convert to JSON and set in the form data
+    console.log(postData);
+    
     const jsonData = writePostDataToJson(postData);
     photoFormData.set("description", jsonData);
     
