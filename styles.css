@@ -4,9 +4,14 @@
     --light-maroon: #B92F22;
     --grayish: #4B444B;
     --light-gray: #AFAFAF;
+    --less-white: #DFDFDF;
     --off-white: #F5F3F1;
 
     --background: var(--off-white);
+}
+
+body {
+    background-color: var(--background);
 }
 
 /* main font formats */
@@ -32,31 +37,6 @@ b, strong {
     font-weight: 600;
 }
 
-/* 
-    Attached to the img element of each thumbnail image.
-    Adds a border to ensure images pop from the background.
-    White background color ensures transparent PNGs are solid.
-*/
-.thumbnail {
-    border-radius: 10px;
-    border: 0.5px solid var(--grayish);
-    width: 100%;
-    margin-top: 15px;
-    background-color: white;
-}
-
-/* Darkens the images on hover and focus to indicate interaction */
-.thumbnail:hover, .thumbnail:focus {
-    filter: brightness(75%);
-    transition: filter 0.2s ease;
-}
-
-.full-image {
-    border-radius: 10px;
-    width: 100%;
-    background-color: white;
-}
-
 .header {
     background-color: white;
     position: sticky;
@@ -67,7 +47,6 @@ b, strong {
 
 .content {
     min-height: calc(100vh - 90px);
-    background-color: var(--background);
 }
 
 h1 {
@@ -90,7 +69,34 @@ a:hover {
     color: var(--maroon);
 }
 
-/* Search Related Formattings */
+
+/* Inspo Board Page */
+
+/* 
+    Attached to the img element of each thumbnail image.
+    Adds a border to ensure images pop from the background.
+    White background color ensures transparent PNGs are solid.
+*/
+.thumbnail {
+    border-radius: 10px;
+    border: 0.5px solid var(--less-white);
+    width: 100%;
+    margin-top: 15px;
+    background-color: white;
+}
+
+/* Darkens the images on hover and focus to indicate interaction */
+.thumbnail:hover, .thumbnail:focus {
+    filter: brightness(75%);
+    transition: filter 0.2s ease;
+}
+
+.inspo-board {
+    margin: 0px;
+    padding-inline: 0px 40px;
+}
+
+/* Search / Tag Related Formattings */
 
 #search {
     border: 1px solid var(--light-gray);
@@ -104,52 +110,6 @@ a:hover {
     top: 100px;
     height: 100vh; /* Ensures it takes full height */
     overflow-y: auto;
-}
-
-/* Individual, Detailed Post Components */
-
-.tag {
-    border-radius: 20px;
-    border: 0.5px solid var(--grayish);
-    padding: 5px 10px 5px 10px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    display: inline-block;
-}
-
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: 20px;
-    font-weight: 500;
-    font-size: 1.25rem;
-    padding: 8px 8px;
-    color: var(--maroon);
-    transition: all 0.1s ease;
-    border-radius: 50%;
-}
-
-.back-link:hover {
-    background-color: #dddddd;
-    text-decoration: none;
-}
-
-.description {
-    background-color: white;
-    border-radius: 20px;
-    color: black;
-    height: 100%;
-}
-
-/* Temporary fix, 'posts' and 'add new inspo' weren't aligning correctly */
-.post-col {
-    width: calc(100vw - 280px);
-}
-
-/* Inspo Board Settings */
-.inspo-board {
-    margin: 0px;
-    padding-inline: 0px 40px;
 }
 
 /* Navbar */
@@ -233,7 +193,7 @@ nav {
 
         border-radius: 20px;
         border: 2px dashed var(--light-gray);
-        background-color: #dddddd;
+        background-color: var(--less-white);
     }
     .upload-area.drag-over {
         border: 2px solid #0088dd;
@@ -262,7 +222,7 @@ nav {
         width: 100px;
         padding: 7px;
         background-color: var(--maroon);
-        color: #ffffff;
+        color: white;
         transition: all 0.08s;
     }
     #post-button:hover {
@@ -271,7 +231,7 @@ nav {
     .progress-circle {
         width: 30px;
         height: 30px;
-        border: 4px solid #cccccc;
+        border: 4px solid var(--less-white);
         border-radius: 50%;
         display: none;
         position: relative;
@@ -300,21 +260,82 @@ nav {
     to {transform: rotate(360deg);}
 }
 
+
+/* Individual, Detailed Post Components */
+
+.tag {
+    border-radius: 20px;
+    border: 0.5px solid var(--grayish);
+    padding: 5px 10px 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 1.25rem;
+    padding: 8px 8px;
+    color: var(--maroon);
+    transition: all 0.1s ease;
+    border-radius: 50%;
+}
+
+.back-link:hover {
+    background-color: var(--less-white);
+    text-decoration: none;
+}
+
+.image-content {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    max-height: 100%;
+    width: min-content;
+}
+
+.image-container {
+    background-color: white;
+    overflow: hidden;
+    align-content: center;
+    padding-inline: 0;
+    border-radius: 20px;
+    border: 1px solid var(--less-white);
+    height: 100%;
+    min-width: min(100vw - 135px, 600px);
+}
+
+.full-image {
+    max-height: 100%;
+    width: 100%;
+    background-color: white;
+    margin: 0;
+}
+
+.description {
+    background-color: white;
+    max-height: 100%;
+    padding: 0;
+    border-radius: 20px;
+    border: 1px solid var(--less-white);
+}
+
 /* Comments Styling */
+
 #inspo-detail {
     display: flex;
     flex-direction: row;
-}
-
-.comments-section {
-    background-color: white;
-    padding: 20px;
-    max-width: 800px;
-    margin: auto;
+    height: calc(100vh - 140px);
+    justify-content: center;
+    padding-right: 50px;
+    gap: 10px;
 }
 
 .comment {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eeeeee;
     padding: 15px 0;
     margin-bottom: 10px;
 }
@@ -364,4 +385,11 @@ nav {
     font-style: italic;
     text-align: center;
     padding: 20px 0;
+}
+
+
+
+@media only screen and (max-width: 800px) {
+
+
 }
