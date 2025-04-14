@@ -31,7 +31,7 @@
         
         <!-- Icons -->
         <div class="nav-links"><!--
-            --><a class="nav-icon" href="../forums/"><img src="../assets/forum-icon.svg" alt="Forums"><span>Forums</span></a><!--
+            --><a class="nav-icon" href="../muze-board/"><i class="bi bi-grid-3x3-gap-fill"></i><span>Board</span></a><!--
             --><a class="nav-icon" href="../"><img src="../assets/inspo-icon.svg" alt="Inspiration"><span>Find Inspo</span></a><!--
             --><a class="nav-icon" href="../profile/"><img src="../assets/profile-icon.svg" alt="Profile"></a>
         </div>
@@ -86,7 +86,18 @@
                     handleCommentSubmit();
                 }
             });
+
+            // Add save button after image is loaded
+            $(document).ajaxStop(function() {
+                // Add save button to detail image
+                if (typeof addSaveButtonToDetail === 'function') {
+                    addSaveButtonToDetail();
+                }
+            });
         });
     </script>
+    
+    <!-- Load the muze board functionality -->
+    <script src="../muze-board/muze-board.js"></script>
 </body>
 </html>

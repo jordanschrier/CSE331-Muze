@@ -280,7 +280,7 @@ nav {
     padding: 8px 8px;
     color: var(--maroon);
     transition: all 0.1s ease;
-    border-radius: 50%;
+    border-radius: 20px;
 }
 
 .back-link:hover {
@@ -406,3 +406,260 @@ nav {
 
 
 }
+/* Muze Board Styles */
+
+.muze-board-container {
+    background-color: white;
+    border-radius: 10px;
+    min-height: 600px;
+    position: relative;
+    /* margin-bottom: 40px; */
+    padding: 20px;
+    border: 1px solid var(--light-gray);
+    overflow: hidden; /* Clip content that extends beyond the container */
+}
+
+.muze-board-container.drag-over {
+    border: 2px dashed var(--maroon);
+    background-color: #f8f0ef;
+}
+
+.empty-board-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--light-gray);
+    font-size: 18px;
+    text-align: center;
+}
+
+.muze-board-item {
+    position: absolute;
+    cursor: move;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.muze-board-item:hover {
+    z-index: 10;
+    border: 1px solid var(--maroon);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.muze-board-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Changed from cover to contain to show entire image */
+    display: block;
+    background-color: white;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 100;
+}
+
+.muze-board-item:hover .remove-image-btn {
+    opacity: 0.7;
+}
+
+.remove-image-btn:hover {
+    opacity: 1;
+    background-color: white;
+}
+
+.board-instructions {
+    margin-bottom: 20px;
+    color: var(--grayish);
+}
+
+/* Save to Board button styles */
+.save-to-board-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 1);
+    border: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.save-to-board-btn.saved {
+    opacity: 0.99 !important;
+    cursor: default;
+    background-color: white;
+    pointer-events: none;
+}
+
+.save-to-board-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+a:hover .save-to-board-btn:not(.saved),
+.save-to-board-btn:not(.saved):hover {
+    opacity: 1;
+    background-color: white;
+}
+
+.detail-save-btn {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    width: auto;
+    height: auto;
+    /* border-radius: 20px; */
+    padding: 8px 15px;
+    opacity: 1;
+    background-color: transparent;
+    color: var(--maroon);
+    /* border: 1px solid var(--maroon); */
+    transition: background-color 0.2s ease;
+}
+
+.detail-save-btn:not(.saved):hover {
+    background-color: rgba(140, 47, 38, 0.1);
+}
+
+.detail-save-btn i {
+    margin-right: 8px;
+    color: var(--maroon);
+}
+
+.detail-save-btn .add-icon,
+.detail-save-btn .checkmark-icon {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    vertical-align: text-bottom;
+}
+
+.detail-save-btn.saved {
+    opacity: 0.8;
+    cursor: default;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    pointer-events: none;
+}
+
+.board-button-wrapper {
+    margin-top: auto !important;
+    padding-top: 20px;
+}
+
+/* jQuery UI Resizable Handles */
+.ui-resizable-handle {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border: 1px solid #ccc;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 90;
+}
+
+/* Handles are now managed by JavaScript */
+
+.ui-resizable-handle:hover {
+    opacity: 1 !important;
+    background-color: var(--light-maroon);
+    border-color: white;
+    box-shadow: 0 0 5px rgba(140, 47, 38, 0.5);
+}
+
+.ui-resizable-n {
+    top: -8px;
+    left: 50%;
+    margin-left: -8px;
+    cursor: n-resize;
+}
+
+.ui-resizable-s {
+    bottom: -8px;
+    left: 50%;
+    margin-left: -8px;
+    cursor: s-resize;
+}
+
+.ui-resizable-e {
+    right: -8px;
+    top: 50%;
+    margin-top: -8px;
+    cursor: e-resize;
+}
+
+.ui-resizable-w {
+    left: -8px;
+    top: 50%;
+    margin-top: -8px;
+    cursor: w-resize;
+}
+
+.ui-resizable-se {
+    right: -8px;
+    bottom: -8px;
+    cursor: se-resize;
+}
+
+.ui-resizable-sw {
+    left: -8px;
+    bottom: -8px;
+    cursor: sw-resize;
+}
+
+.ui-resizable-ne {
+    right: -8px;
+    top: -8px;
+    cursor: ne-resize;
+}
+
+.ui-resizable-nw {
+    left: -8px;
+    top: -8px;
+    cursor: nw-resize;
+}
+
+/* jQuery UI resize helper */
+.ui-resizable-helper {
+    border: 2px dashed var(--maroon);
+    background-color: rgba(140, 47, 38, 0.1);
+    box-sizing: border-box;
+}
+
+/* Enhanced resize hitboxes */
+.resize-hitbox {
+    /* Uncomment for debugging 
+    border: 1px solid blue;
+    background-color: rgba(0, 0, 255, 0.2); 
+    */
+    pointer-events: auto !important; /* Force clickable */
+}
+
+/* End of styles */

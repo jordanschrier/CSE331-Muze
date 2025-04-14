@@ -31,10 +31,10 @@
         
         <!-- Icons -->
         <div class="nav-links"><!--
-            --><a class="nav-icon" href="./forums/"><img src="./assets/forum-icon.svg" alt="Forums"><span>Forums</span></a><!--
-            --><a class="nav-icon" href="./"><img src="./assets/inspo-icon.svg" alt="Inspiration"><span>Find Inspo</span></a><!--
-            --><a class="nav-icon" href="./profile/"><img src="./assets/profile-icon.svg" alt="Profile"></a>
-        </div>
+            --><a class="nav-icon" href="./muze-board/"><i class="bi bi-grid-3x3-gap-fill"></i><span>Board</span></a><!--
+            --><a class="nav-icon" href="./"><img src="assets/inspo-icon.svg" alt="Inspiration"><span>Find Inspo</span></a><!--
+            --><a class="nav-icon" href="./profile/"><img src="assets/profile-icon.svg" alt="Profile"></a>
+    </div>
     </nav>
 
     <div class="content p-4">
@@ -66,10 +66,21 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-        fetchPhotos();
-        setupSearch();
-    });
+            fetchPhotos();
+            setupSearch();
+            
+            // Add save buttons after images are loaded
+            $(document).ajaxStop(function() {
+                // Add save buttons to all images
+                if (typeof addSaveButtonsToGallery === 'function') {
+                    addSaveButtonsToGallery();
+                }
+            });
+        });
     </script>
+    
+    <!-- Load the muze board functionality -->
+    <script src="muze-board/muze-board.js"></script>
 </body>
 </html>
 
