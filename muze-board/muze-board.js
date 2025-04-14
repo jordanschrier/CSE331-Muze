@@ -21,9 +21,12 @@ function loadSavedImages() {
         $board.append('<div class="empty-board-message">Drag images here to create your muze board</div>');
         return;
     }
-
+    
     // Add the saved images to the board
-    savedBoard.items.forEach(item => {
+    savedBoard.items.forEach((item) => {
+        // Ensure any existing item with this ID is removed first
+        $(`.muze-board-item[data-id="${item.id}"]`).remove();
+        // Add the image to the board
         addImageToBoard(item.id, item.src, item.position, item.size);
     });
 }
@@ -108,8 +111,21 @@ function setupDragAndDrop() {
  * @param {string} id - The image ID to check
  * @returns {boolean} Whether the image is already on the board
  */
-function isImageOnBoard(id) {
-    return $(`.muze-board-item[data-id="${id}"]`).length > 0;
+/**
+ * Checks if an image is already on the board in localStorage
+ * @param {string} id - The image ID to check
+ * @param {boolean} checkDomOnly - If true, only check DOM not localStorage
+ * @returns {boolean} Whether the image is already on the board
+ */
+function isImageOnBoard(id, checkDomOnly) {
+    // Check DOM if specified
+    if (checkDomOnly) {
+        return $(`.muze-board-item[data-id="${id}"]`).length > 0;
+    }
+    
+    // Otherwise check localStorage
+    const savedBoard = getSavedBoard() || { items: [] };
+    return savedBoard.items.some(item => item.id === id);
 }
 
 /**
@@ -120,9 +136,16 @@ function isImageOnBoard(id) {
  * @param {Object} size - The size {width, height} of the image
  */
 function addImageToBoard(id, src, position, size) {
-    // Check if the image is already on the board to prevent duplicates
-    if (isImageOnBoard(id)) {
-        console.log("Image already on board, not adding again");
+    // Special case for loading from localStorage - don't do duplicate check
+    const isLoadingFromSaved = size && size.hasOwnProperty('width') && size.hasOwnProperty('height');
+    
+    // If we're not loading from saved state, check for duplicates
+    if (!isLoadingFromSaved && isImageOnBoard(id)) {
+        return;
+    }
+    
+    // Check if the image is already in the DOM to prevent duplicate DOM elements
+    if ($(`.muze-board-item[data-id="${id}"]`).length > 0) {
         return;
     }
     
@@ -131,9 +154,17 @@ function addImageToBoard(id, src, position, size) {
     
     const $board = $("#muze-board");
     
-    // Whether this is a new image or a restored one from saved state
-    const isFromSavedState = size.hasOwnProperty('width') && size.hasOwnProperty('height') && 
+    // Whether this is a new image or a restored one from saved state 
+    const isFromSavedState = size && size.hasOwnProperty('width') && size.hasOwnProperty('height') && 
                             size.width > 0 && size.height > 0;
+    
+    // Make sure we have a valid source URL
+    if (!src) {
+        return;
+    }
+    
+    // Make sure the source URL is valid
+    const validSrc = src.includes('http') ? src : $path_to_backend + src;
     
     // Create a draggable, resizable image element
     const $imgContainer = $("<div>")
@@ -194,18 +225,18 @@ function addImageToBoard(id, src, position, size) {
         };
         
         // Start loading the image
-        tempImg.src = src;
+        tempImg.src = validSrc;
     }
     
     // Add the image (the size will be adjusted when loaded)
     const $img = $("<img>")
-        .attr("src", src)
+        .attr("src", validSrc)
         .addClass("muze-board-image");
     
     // Add remove button
     const $removeBtn = $("<button>")
         .addClass("remove-image-btn")
-        .html('<i class="bi bi-x"></i>')
+        .html('<img src="../assets/cross-x-icon.svg" alt="Remove" class="cross-icon">')
         .on('click', function(e) {
             e.stopPropagation();
             $(this).parent().remove();
@@ -456,11 +487,47 @@ function getSavedBoard() {
     if (!savedData) return null;
     
     try {
-        return JSON.parse(savedData);
+        const parsedData = JSON.parse(savedData);
+        
+        // Process URLs in saved items to ensure they're valid
+        if (parsedData.items && parsedData.items.length > 0) {
+            for (const item of parsedData.items) {
+                // Fix any problematic URLs
+                if (item.src && !item.src.includes('http')) {
+                    item.src = $path_to_backend + item.src;
+                }
+                
+                // Check if the URL contains a double slash in the path
+                if (item.src && item.src.includes('//images/')) {
+                    item.src = item.src.replace('//images/', '/images/');
+                }
+            }
+        }
+        
+        return parsedData;
     } catch (error) {
         console.error("Error parsing saved board data:", error);
         return null;
     }
+}
+
+/**
+ * Clears the muze board in localStorage (for debugging)
+ * Can be called from the browser console with clearMuzeBoard()
+ */
+function clearMuzeBoard() {
+    localStorage.removeItem("muze-board");
+    
+    // If we're on the muze board page, update the UI immediately
+    if (window.location.pathname.includes("/muze-board/")) {
+        // Clear DOM elements
+        $("#muze-board").empty().append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+    }
+    
+    // Update all save button states
+    updateSaveButtonsUI();
+    
+    return false;
 }
 
 /**
@@ -479,8 +546,7 @@ function makeImageDraggable(id, src) {
     $parent.attr("draggable", "true");
     
     // Check if the image is already saved to the board
-    const savedBoard = getSavedBoard() || { items: [] };
-    const isAlreadySaved = savedBoard.items.some(item => item.id === id);
+    const isAlreadySaved = isImageOnBoard(id);
     
     // Remove any existing button (in case state has changed)
     $parent.find(".save-to-board-btn").remove();
@@ -493,15 +559,31 @@ function makeImageDraggable(id, src) {
         .addClass("save-to-board-btn");
     
     if (isAlreadySaved) {
-        // Already saved - show checkmark
+        // Already saved - show X icon
         $saveBtn
             .addClass("saved")
-            .html('<img src="./assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon">')
-            .prop("disabled", true);
+            .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon">')
+            .off('click') // Remove any previous click handlers
+            .on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Remove from board
+                removeImageFromBoard(id);
+                
+                // Update button to add icon
+                $(this)
+                    .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon">')
+                    .removeClass("saved");
+                    
+                // Force global UI update
+                updateSaveButtonsUI();
+            });
     } else {
         // Not saved - show add icon
         $saveBtn
-            .html('<img src="./assets/add-icon.svg" alt="Add" class="add-icon">')
+            .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon">')
+            .off('click') // Remove any previous click handlers
             .on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -511,9 +593,11 @@ function makeImageDraggable(id, src) {
                 
                 // Update button to saved state without page refresh
                 $(this)
-                    .html('<img src="./assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon">')
-                    .addClass("saved")
-                    .prop("disabled", true);
+                    .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon">')
+                    .addClass("saved");
+                    
+                // Force global UI update
+                updateSaveButtonsUI();
             });
     }
     
@@ -539,13 +623,101 @@ function makeImageDraggable(id, src) {
  */
 function updateSaveButtonsUI() {
     // If we're on the gallery page, refresh all thumbnail save buttons
-    if (window.location.pathname.indexOf("/inspo/") === -1) {
+    if (window.location.pathname.indexOf("/inspo/") === -1 && 
+        window.location.pathname.indexOf("/muze-board/") === -1) {
         addSaveButtonsToGallery();
     } 
     // If we're on the detail page, refresh the detail save button
-    else if (typeof addSaveButtonToDetail === 'function') {
+    else if (window.location.pathname.indexOf("/inspo/") !== -1) {
         addSaveButtonToDetail();
     }
+    
+    // Force immediate UI refresh
+    // This is needed because sometimes the DOM updates don't reflect immediately
+    setTimeout(function() {
+        // Update all thumbnail buttons directly
+        $(".thumbnail").each(function() {
+            const $img = $(this);
+            const id = $img.attr("id");
+            const $parent = $img.parent();
+            const $saveBtn = $parent.find(".save-to-board-btn");
+            
+            if ($saveBtn.length && id) {
+                const isAlreadySaved = isImageOnBoard(id);
+                
+                if (isAlreadySaved && !$saveBtn.hasClass("saved")) {
+                    $saveBtn
+                        .addClass("saved")
+                        .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon">');
+                } else if (!isAlreadySaved && $saveBtn.hasClass("saved")) {
+                    $saveBtn
+                        .removeClass("saved")
+                        .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon">');
+                }
+            }
+        });
+        
+        // Update detail button if on inspo page
+        if (window.location.pathname.indexOf("/inspo/") !== -1) {
+            const id = getUrlParams().id;
+            const $saveBtn = $(".detail-save-btn");
+            
+            if ($saveBtn.length && id) {
+                const isAlreadySaved = isImageOnBoard(id);
+                
+                if (isAlreadySaved && !$saveBtn.hasClass("saved")) {
+                    $saveBtn
+                        .addClass("saved")
+                        .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon"> Unsave');
+                } else if (!isAlreadySaved && $saveBtn.hasClass("saved")) {
+                    $saveBtn
+                        .removeClass("saved")
+                        .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon"> Add to board');
+                }
+            }
+        }
+    }, 100);
+}
+
+/**
+ * Removes an image from the muze board
+ * @param {string} id - The image ID to remove
+ * @returns {boolean} Whether the removal was successful
+ */
+function removeImageFromBoard(id) {
+    // Load the current board
+    let savedBoard = getSavedBoard() || { items: [] };
+    
+    // Find the image index
+    const imageIndex = savedBoard.items.findIndex(item => item.id === id);
+    if (imageIndex === -1) {
+        return false;
+    }
+    
+    // Remove the image from the array
+    savedBoard.items.splice(imageIndex, 1);
+    
+    // Save the updated board
+    localStorage.setItem("muze-board", JSON.stringify(savedBoard));
+    
+    // Immediately update UI after saving
+    updateSaveButtonsUI();
+    
+    // Also remove from DOM if it exists on the current page
+    const domElement = $(`.muze-board-item[data-id="${id}"]`);
+    if (domElement.length > 0) {
+        domElement.remove();
+    }
+    
+    // Update UI to reflect changes
+    updateSaveButtonsUI();
+    
+    // Show empty message if no images left on the board
+    if ($(".muze-board-item").length === 0 && $("#muze-board").length > 0) {
+        $("#muze-board").append('<div class="empty-board-message">Drag images here to create your muze board</div>');
+    }
+    
+    return true;
 }
 
 /**
@@ -559,15 +731,16 @@ function saveImageToBoard(id, src) {
     let savedBoard = getSavedBoard() || { items: [] };
     
     // Check if the image is already on the board
-    const exists = savedBoard.items.some(item => item.id === id);
-    if (exists) {
-        console.log("Image already on board, not adding again");
+    if (isImageOnBoard(id)) {
         return false;
     }
     
     // Get staggered position
     const xPos = 50 + (savedBoard.items.length * 20);
     const yPos = 50 + (savedBoard.items.length * 20);
+    
+    // Make sure the source URL is valid
+    const validSrc = src.includes('http') ? src : $path_to_backend + src;
     
     // Instead of using a fixed size, load the image to determine proper dimensions
     const tempImg = new Image();
@@ -592,7 +765,7 @@ function saveImageToBoard(id, src) {
         // Add the image with calculated position and size
         savedBoard.items.push({
             id: id,
-            src: src,
+            src: validSrc,
             position: {
                 x: xPos,
                 y: yPos
@@ -605,10 +778,13 @@ function saveImageToBoard(id, src) {
         
         // Save the updated board
         localStorage.setItem("muze-board", JSON.stringify(savedBoard));
+        
+        // Immediately update UI after saving
+        updateSaveButtonsUI();
     };
     
     // Start loading the image
-    tempImg.src = src;
+    tempImg.src = validSrc;
     
     // In case the image fails to load or is cached, provide a fallback timeout
     setTimeout(function() {
@@ -620,7 +796,7 @@ function saveImageToBoard(id, src) {
             // Add with default dimensions
             currentBoard.items.push({
                 id: id,
-                src: src,
+                src: validSrc,
                 position: {
                     x: xPos,
                     y: yPos
@@ -632,8 +808,14 @@ function saveImageToBoard(id, src) {
             });
             
             localStorage.setItem("muze-board", JSON.stringify(currentBoard));
+            
+            // Update UI to reflect changes
+            updateSaveButtonsUI();
         }
     }, 500);
+    
+    // Update UI to reflect changes immediately
+    updateSaveButtonsUI();
     
     return true;
 }
@@ -648,7 +830,10 @@ function addSaveButtonsToGallery() {
         const id = $img.attr("id");
         const src = $img.attr("src");
         
-        makeImageDraggable(id, src);
+        // Make sure the source URL is complete
+        const fullSrc = src.includes('http') ? src : $path_to_backend + src;
+        
+        makeImageDraggable(id, fullSrc);
     });
 }
 
@@ -660,36 +845,23 @@ function addSaveButtonToDetail() {
     const src = $img.attr("src");
     const id = getUrlParams().id;
     
-    if (!id || !src) return;
+    if (!id || !src) {
+        return;
+    }
     
-    // Make the image container draggable
-    const $detailContainer = $img.parent();
-    $detailContainer.attr("draggable", "true");
-    $detailContainer.css("position", "relative");
+    // Make sure the source URL is complete
+    let fullSrc = src;
     
-    $detailContainer.on("dragstart", function(e) {
-        const imageData = {
-            id: id,
-            src: src
-        };
-        
-        e.originalEvent.dataTransfer.setData("application/json", JSON.stringify(imageData));
-        e.originalEvent.dataTransfer.effectAllowed = "copy";
-    });
+    // If the URL doesn't start with http, add the backend path
+    if (!src.includes('http')) {
+        fullSrc = $path_to_backend + src;
+    }
     
     // Add save button to the description div
-    const $descriptionDiv = $(".description");
-    
-    // Apply flex layout to the description to push the button to the bottom
-    $descriptionDiv.css({
-        "display": "flex",
-        "flex-direction": "column",
-        "height": "100%"
-    });
+    const $descriptionDiv = $("#user-actions");
     
     // Check if the image is already saved to the board
-    const savedBoard = getSavedBoard() || { items: [] };
-    const isAlreadySaved = savedBoard.items.some(item => item.id === id);
+    const isAlreadySaved = isImageOnBoard(id);
     
     // Remove any existing button (in case state has changed)
     $descriptionDiv.find(".board-button-wrapper").remove();
@@ -699,27 +871,45 @@ function addSaveButtonToDetail() {
         .addClass("save-to-board-btn detail-save-btn");
     
     if (isAlreadySaved) {
-        // Already saved - show checkmark and "Saved to board"
+        // Already saved - show X icon and "Unsave"
         $saveBtn
             .addClass("saved")
-            .html('<img src="../assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon"> Saved to board')
-            .prop("disabled", true);
+            .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon"> Unsave')
+            .off('click') // Remove any previous click handlers
+            .on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Remove the image from local storage
+                removeImageFromBoard(id);
+                
+                // Update button to unsaved state without page refresh
+                $(this)
+                    .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon"> Add to board')
+                    .removeClass("saved");
+                    
+                // Force global UI update
+                updateSaveButtonsUI();
+            });
     } else {
         // Not saved - show add icon and "Add to board"
         $saveBtn
             .html('<img src="../assets/add-icon.svg" alt="Add" class="add-icon"> Add to board')
+            .off('click') // Remove any previous click handlers
             .on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
                 // Save the image to local storage
-                saveImageToBoard(id, src);
+                saveImageToBoard(id, fullSrc);
                 
                 // Update button to saved state without page refresh
                 $(this)
-                    .html('<img src="../assets/checkmark-icon.svg" alt="Saved" class="checkmark-icon"> Saved to board')
-                    .addClass("saved")
-                    .prop("disabled", true);
+                    .html('<img src="../assets/cross-x-icon.svg" alt="Unsave" class="cross-icon"> Unsave')
+                    .addClass("saved");
+                    
+                // Force global UI update
+                updateSaveButtonsUI();
             });
     }
     
@@ -754,7 +944,8 @@ function processUrlParams() {
         $.getJSON(endpoint, function(data) {
             if (!data || data.length === 0) return;
             
-            const src = $path_to_backend + data[0].src;
+            // Ensure the source URL includes the backend path
+            const src = data[0].src.includes('http') ? data[0].src : $path_to_backend + data[0].src;
             
             // Default position in the center of the board
             const $board = $("#muze-board");

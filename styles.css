@@ -326,6 +326,10 @@ nav {
     max-width: 100%;
 }
 
+#user-actions {
+    padding-bottom: 5px;
+}
+
 /* Comments Styling */
 
 #inspo-detail {
@@ -476,6 +480,12 @@ nav {
     z-index: 100;
 }
 
+.remove-image-btn .cross-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--maroon);
+}
+
 .muze-board-item:hover .remove-image-btn {
     opacity: 0.7;
 }
@@ -510,18 +520,18 @@ nav {
 
 .save-to-board-btn.saved {
     opacity: 0.99 !important;
-    cursor: default;
     background-color: white;
-    pointer-events: none;
 }
 
-.save-to-board-btn img {
+.save-to-board-btn img,
+.save-to-board-btn i {
     width: 16px;
     height: 16px;
+    color: var(--maroon);
 }
 
-a:hover .save-to-board-btn:not(.saved),
-.save-to-board-btn:not(.saved):hover {
+a:hover .save-to-board-btn,
+.save-to-board-btn:hover {
     opacity: 1;
     background-color: white;
 }
@@ -553,7 +563,8 @@ a:hover .save-to-board-btn:not(.saved),
 }
 
 .detail-save-btn .add-icon,
-.detail-save-btn .checkmark-icon {
+.detail-save-btn .checkmark-icon,
+.detail-save-btn .cross-icon {
     margin-right: 8px;
     width: 18px;
     height: 18px;
@@ -561,11 +572,8 @@ a:hover .save-to-board-btn:not(.saved),
 }
 
 .detail-save-btn.saved {
-    opacity: 0.8;
-    cursor: default;
-    background-color: transparent !important;
-    border-color: transparent !important;
-    pointer-events: none;
+    opacity: 0.9;
+    background-color: rgba(140, 47, 38, 0.1);
 }
 
 .board-button-wrapper {
