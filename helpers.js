@@ -21,6 +21,7 @@ function writePostDataToJson(postData) {
             postData.tag2 || ""
         ],
         comments: postData.comments || [],
+        savedCount: postData.savedCount || 0, // Track number of times saved to boards
         createdAt: new Date().toISOString() // Adding timestamp for future sorting options
     };
     
@@ -75,6 +76,7 @@ function parsePostData(backendData) {
         tag1: "",
         tag2: "",
         comments: [],
+        savedCount: 0,
         isLegacyFormat: false,
         isValid: false
     };
@@ -93,6 +95,7 @@ function parsePostData(backendData) {
             tag1: (jsonData.tags && jsonData.tags[0]) || "",
             tag2: (jsonData.tags && jsonData.tags[1]) || "",
             comments: jsonData.comments || [],
+            savedCount: jsonData.savedCount || 0,
             createdAt: jsonData.createdAt,
             isLegacyFormat: false,
             isValid: true
@@ -109,6 +112,7 @@ function parsePostData(backendData) {
                     tag1: parts.length > 1 ? parts[1] : "",
                     tag2: parts.length > 2 ? parts[2] : "",
                     comments: [], // Legacy format doesn't support comments
+                    savedCount: 0,  // Legacy format doesn't support saved count
                     isLegacyFormat: true,
                     isValid: true
                 };
@@ -120,6 +124,7 @@ function parsePostData(backendData) {
                 tag1: "",
                 tag2: "",
                 comments: [],
+                savedCount: 0,
                 isLegacyFormat: true,
                 isValid: false
             };
@@ -127,6 +132,65 @@ function parsePostData(backendData) {
     }
     
     return defaultData;
+}
+
+/**
+ * Updates the saved count for an image
+ * @param {string} postId - The ID of the post to update
+ * @param {number} increment - Amount to change count by (1 for save, -1 for unsave)
+ * @returns {Promise} Promise that resolves when the count is updated
+ */
+function updateServerSavedCount(postId, increment) {
+    return new Promise((resolve, reject) => {
+        if (!postId) {
+            reject(new Error("Post ID is required"));
+            return;
+        }
+        
+        // First, get the current post data
+        const endpoint = $path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + postId;
+        
+        $.getJSON(endpoint)
+            .then(data => {
+                if (!data || data.length === 0) {
+                    reject(new Error("Post not found"));
+                    return;
+                }
+                
+                // Parse the current post data
+                const postData = parsePostData(data[0]);
+                
+                // Update the saved count (ensure it never goes below 0)
+                postData.savedCount = Math.max(0, (postData.savedCount || 0) + increment);
+                
+                // Convert post data to JSON string for the description field
+                const jsonDescription = writePostDataToJson(postData);
+
+                // Update the post on the server
+                return $.ajax({
+                    url: $path_to_backend + 'updatePhoto.php',
+                    type: 'POST',
+                    data: {
+                        grp_id: $grp_id,
+                        id: postId,
+                        description: jsonDescription
+                    },
+                    error: function(xhr, status, error) {
+                        if (xhr.status === 404) {
+                            throw new Error("The updatePhoto.php endpoint is not available.");
+                        } else {
+                            throw new Error("Error updating saved count: " + error);
+                        }
+                    }
+                });
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
 }
 
 /**

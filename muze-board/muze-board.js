@@ -729,50 +729,55 @@ function removeImageFromBoard(id) {
  * @param {number} increment - Amount to change the count by (1 for add, -1 for remove)
  */
 function updateSavedCount(id, increment) {
-    // Get the current saved counts from localStorage
-    let savedCounts = {};
-    const savedCountsData = localStorage.getItem("muze-saved-counts");
-    
-    if (savedCountsData) {
-        try {
-            savedCounts = JSON.parse(savedCountsData);
-        } catch (error) {
-            // Reset if data is corrupted
-            savedCounts = {};
-        }
-    }
-    
-    // Get the current count or default to 0
-    let currentCount = savedCounts[id] || 0;
-    
-    // Update the count with the increment (ensure it never goes below 0)
-    currentCount = Math.max(0, currentCount + increment);
-    
-    // Update the storage
-    savedCounts[id] = currentCount;
-    localStorage.setItem("muze-saved-counts", JSON.stringify(savedCounts));
-    
-    // Update the UI if we're on the detail page for this image
-    updateSavedCountUI(id, currentCount);
-    
-    return currentCount;
+    // Update the count on the server
+    updateServerSavedCount(id, increment)
+        .then(() => {
+            // After successfully updating on the server, fetch the latest count
+            return fetchLatestCount(id);
+        })
+        .then(count => {
+            // Update the UI with the latest count from the server
+            updateSavedCountUI(id, count);
+        })
+        .catch(error => {
+            console.error("Error updating saved count:", error);
+        });
 }
 
 /**
- * Gets the saved count for an image
+ * Fetches the latest saved count from the server
  * @param {string} id - The image ID
- * @returns {number} The number of times the image has been saved
+ * @returns {Promise<number>} Promise that resolves with the current saved count
+ */
+function fetchLatestCount(id) {
+    return new Promise((resolve, reject) => {
+        // Fetch the photo data
+        const endpoint = $path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + id;
+        
+        $.getJSON(endpoint)
+            .then(data => {
+                if (!data || data.length === 0) {
+                    reject(new Error("Post not found"));
+                    return;
+                }
+                
+                // Parse the post data
+                const postData = parsePostData(data[0]);
+                resolve(postData.savedCount || 0);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
+/**
+ * Gets the saved count for an image (async)
+ * @param {string} id - The image ID
+ * @returns {Promise<number>} Promise that resolves with the saved count
  */
 function getSavedCount(id) {
-    const savedCountsData = localStorage.getItem("muze-saved-counts");
-    if (!savedCountsData) return 0;
-    
-    try {
-        const savedCounts = JSON.parse(savedCountsData);
-        return savedCounts[id] || 0;
-    } catch (error) {
-        return 0;
-    }
+    return fetchLatestCount(id).catch(() => 0);
 }
 
 /**
@@ -810,9 +815,18 @@ function updateSavedCountUI(id, count) {
     // Update the text with the current count
     const $text = $countDisplay.find("span");
     if ($text.length) {
-        $text.text(`${count} saved`);
+        if (count == 1) {
+            $text.text(`${count} person saved`);
+        }
+        else {
+            $text.text(`${count} people saved`);
+        }
     } else {
-        $countDisplay.append($("<span>").text(`${count} saved`));
+        if(count == 1) {
+            $countDisplay.append($("<span>").text(`${count} person saved`));
+        } else {
+            $countDisplay.append($("<span>").text(`${count} people saved`));
+        }
     }
 }
 
@@ -959,9 +973,10 @@ function addSaveButtonToDetail() {
         fullSrc = $path_to_backend + src;
     }
     
-    // Show current saved count in the UI
-    const currentCount = getSavedCount(id);
-    updateSavedCountUI(id, currentCount);
+    // Show current saved count in the UI (fetch from server)
+    getSavedCount(id).then(count => {
+        updateSavedCountUI(id, count);
+    });
     
     // Add save button to the description div
     const $descriptionDiv = $("#user-actions");
