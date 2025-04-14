@@ -291,3 +291,203 @@ function isValidPost(backendData) {
         return parts.length >= 1 && parts[0].trim().length > 0;
     }
 }
+
+
+/**
+ * handles the filtering functionality 
+ */
+function tagFiltering() {
+    const tagItems = document.querySelectorAll('.tag-item');
+    const searchInput = document.getElementById('search');
+    const selectedTagsContainer = document.getElementById('selected-tags');
+
+    const $tn_col1 = $("#col1");
+    const $tn_col2 = $("#col2");
+    const $tn_col3 = $("#col3");
+    
+    // filtering
+    let selectedTags = [];
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            // finds all the tags & their categories
+            const tagItems = document.querySelectorAll('.tag-item');
+            const tagCategories = document.querySelectorAll('.tag-category');
+            
+            // fliters through tags 
+            tagItems.forEach(tagItem => {
+                const tagText = tagItem.textContent.toLowerCase();
+                if (searchTerm === '' || tagText.includes(searchTerm)) {
+                    tagItem.style.display = 'block';
+                } else {
+                    tagItem.style.display = 'none';
+                }
+            });
+            
+            // hides categories with no tags after filter
+            tagCategories.forEach(category => {
+                const visibleTags = category.querySelectorAll('.tag-item[style="display: block;"]');
+                if (visibleTags.length === 0 && searchTerm !== '') {
+                    category.style.display = 'none';
+                } else {
+                    category.style.display = 'block';
+                }
+            });
+        });
+    }
+    
+    // handling to selection
+    tagItems.forEach(tagItem => {
+        tagItem.addEventListener('click', function() {
+            const tagName = this.textContent.trim();
+            
+            if (this.classList.contains('selected')) {
+                // remove tag
+                this.classList.remove('selected');
+                selectedTags = selectedTags.filter(tag => tag !== tagName);
+                const selectedTag = document.querySelector(`.selected-tag[data-tag="${tagName}"]`);
+                    if (selectedTag) {
+                        selectedTag.remove();
+                    }
+            } else {
+                // add tag to list
+                this.classList.add('selected');
+                selectedTags.push(tagName);
+                addSelectedTag(tagName, this);
+            }
+            
+            // filter gallery based on tag filter slection
+            if (selectedTags.length > 0) {
+                filterGalleryByTags(selectedTags);
+            } else {
+                // if none, show all
+                fetchPhotos();
+            }
+        });
+    });
+    
+    /**
+     * Adds a tag to the selected tags section
+     * @param {string} tagName - The tag to add
+     */
+    function addSelectedTag(tagName) {
+        if (!document.querySelector(`.selected-tag[data-tag="${tagName}"]`)) {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'selected-tag';
+            tagElement.dataset.tag = tagName;
+            tagElement.innerHTML = `${tagName} <span class="remove-tag">&times;</span>`;
+            
+            // removing selected tags 
+            tagElement.querySelector('.remove-tag').addEventListener('click', function() {
+                tagElement.remove();
+                selectedTags = selectedTags.filter(tag => tag !== tagName);
+                const tagItems = document.querySelectorAll('.tag-item');
+                tagItems.forEach(item => {
+                    if (item.textContent.trim() === tagName) {
+                        item.classList.remove('selected');
+                    }
+                });
+                
+                // if no tags selected, show all
+                if (selectedTags.length === 0) {
+                    fetchPhotos();
+                } else {
+                    // filter gallery with the selcted tags
+                    filterGalleryByTags(selectedTags);
+                }
+            });
+            
+            selectedTagsContainer.appendChild(tagElement);
+        }
+    }
+    
+    /**
+     * Filters gallery by selected tags
+     * @param {Array} tags - Array of selected tag names
+     */
+    function filterGalleryByTags(tags) {
+        $tn_col1.empty();
+        $tn_col2.empty();
+        $tn_col3.empty();
+        
+        $(".search-message").remove();
+        
+        // gets all photos
+        $endpoint = $path_to_backend + 'getPhotos.php?grp_id=' + $grp_id;
+        $.getJSON($endpoint, function(photoList) {
+            if (!photoList || photoList.length === 0) {
+                $tn_col1.append('<div class="no-posts">No posts found</div>');
+                return;
+            }
+            
+            console.log("Filtering " + photoList.length + " photos by tags:", tags);
+            
+            // stores photos that match the tag
+            let matchedPhotos = [];
+            let photosProcessed = 0;
+            
+        
+            function handleTagFiltering() {
+                console.log("Tag filtering complete, found " + matchedPhotos.length + " matches");
+                
+                // show message if none found, but still show full gallery
+                if (matchedPhotos.length === 0) {
+                    $("#column_section").before(
+                        '<div class="no-posts search-message">No posts match the selected tags. Showing all photos.</div>'
+                    );
+                    sortImagesIntoColumns(photoList, $tn_col1, $tn_col2, $tn_col3);
+                } else {
+                    // show the photos that match to slected tags
+                    sortImagesIntoColumns(matchedPhotos, $tn_col1, $tn_col2, $tn_col3);
+                }
+            }
+            
+            // gets all photo details to chekc against selected tags
+            photoList.forEach(function(photo) {
+                const endpoint = $path_to_backend + 'viewPhoto.php?id=' + photo.id;
+                $.getJSON(endpoint, function(detailData) {
+                    const photoDets = {
+                        ...photo,
+                        description: detailData[0]?.description || ""
+                    };
+                    
+                    // parse photo dets
+                    const postData = parsePostData(photoDets);
+                    
+                    // checks if selected tags match any in the gallery
+                    const isMatch = tags.some(tag => 
+                        (postData.tag1 && postData.tag1.toLowerCase() === tag.toLowerCase()) ||
+                        (postData.tag2 && postData.tag2.toLowerCase() === tag.toLowerCase())
+                    );
+                    
+                    // add match to results if found
+                    if (isMatch) {
+                        matchedPhotos.push(photo);
+                        console.log("Match found in photo ID: " + photo.id);
+                    }
+                    
+                    photosProcessed++;
+                    
+                    // display photos that match if all processed
+                    if (photosProcessed === photoList.length) {
+                        handleTagFiltering();
+                    }
+                })
+                .fail(function() {
+                    console.log("Failed to load details for photo ID: " + photo.id);
+                    photosProcessed++;
+                    
+                    // checks if all photos processed
+                    if (photosProcessed === photoList.length) {
+                        handleTagFiltering();
+                    }
+                });
+            });
+        })
+        .fail(function() {
+            $tn_col1.append('<div class="no-posts">Error loading posts</div>');
+        });
+    }
+}
