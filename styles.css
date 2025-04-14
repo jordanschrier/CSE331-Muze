@@ -44,6 +44,18 @@ b, strong {
     background-color: white;
 }
 
+/*
+
+*/
+.admin-tn{
+    border-radius: 5px;
+    width: 200px;
+    background-color: white;
+    object-fit: cover;
+    max-height: 150px;
+    align-items: center;
+}
+
 /* Darkens the images on hover and focus to indicate interaction */
 .thumbnail:hover, .thumbnail:focus {
     filter: brightness(75%);
