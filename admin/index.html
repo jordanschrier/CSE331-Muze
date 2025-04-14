@@ -30,7 +30,9 @@
     <div class="content p-4">
         <div class="container">
             <h1>Admin Interface</h1>
-            <div id="thumbs">
+            <div class="row">
+                <div id="thumbs" class="col"></div>
+                <div id="image-info" class="col"></div>
             </div>
         </div>
     </div>
@@ -38,18 +40,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             fetchPhotos();
-
-            // Add save button after image is loaded
-            $(document).ajaxStop(function() {
-                // Add save button to detail image
-                if (typeof addSaveButtonToDetail === 'function') {
-                    addSaveButtonToDetail();
-                }
-            });
         });
     </script>
-    
-    <!-- Load the muze board functionality -->
-    <script src="../muze-board/muze-board.js"></script>
 </body>
 </html>

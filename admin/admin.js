@@ -15,32 +15,49 @@ function fetchPhotos()
     {
         $.each(data, function(key, val)
         {
-            $("<div />")
-                .attr("class", "admin-tn col")
-                .append(
-                    $("<img />")
-                        .attr("src", $path_to_backend + val.tn_src)
-                        .click(function() {
-                            deletePhoto(val.id);
-                        }),
-
-                    $("<img />")
-                        .attr("src", "../assets/remove-icon.svg")
-                        .click(function() {
-                            deletePhoto(val.id);
-                        })
-                )
+            $("<img />")
+                .attr("src", $path_to_backend + val.tn_src)
+                .click(function() {
+                    clickPhoto(val.id);
+                })
                 .appendTo($tn_div)
         });
     });
 };
 
 /**
- * Triggers when admin clicks an image to route to its full details
+ * Triggers when admin clicks an image to display the full details in
+ * the right column.
  * @param {*} id - The photo ID to display
  */
 function clickPhoto(id) {
-    
+    var $info_col = $("#image-info");
+    $info_col.empty();
+
+    const endpoint = $path_to_backend + 'viewPhoto.php?grp_id=' + $grp_id + '&id=' + id;
+    $.getJSON(endpoint, function(data)
+    {
+        $("<img />")
+            .attr("src", $path_to_backend + data[0].src)
+            .attr("class", "row")
+            .css({maxHeight: "300px"})
+            .appendTo($info_col)
+        
+        $("<button />")
+            .attr("href", "#")
+            .attr("class", "row py-2 mt-2 d-flex align-items-center")
+            .append(
+                $("<img />")
+                    .attr("src", "../assets/remove-icon.svg")
+                    .attr("class", "pr-2"),
+                $("<span />")
+                    .text("Delete post")
+            )
+            .click(function() {
+                deletePhoto(id);
+            })
+            .appendTo($info_col)
+    });
 }
 
 /**
@@ -64,6 +81,9 @@ function deletePhoto(id){
     })
     .done(function() //let the admin know the photo was deleted
     {
+        alert("Post deleted successfully.");
+        $("#image-info").empty;
+        fetchPhotos();
     });
 }
 
