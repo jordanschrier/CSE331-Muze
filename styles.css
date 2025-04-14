@@ -70,6 +70,25 @@ a:hover {
 }
 
 
+/* turn any link into a button*/
+
+.link-button { 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 20px;
+    padding: 6px 10px;
+    img {
+        padding-right: 6px;
+    }
+}
+
+.link-button:hover {
+    text-decoration: none;
+    background-color: var(--less-white);
+}
+
+
 /* Inspo Board Page */
 
 /* 
@@ -94,6 +113,18 @@ a:hover {
 .inspo-board {
     margin: 0px;
     padding-inline: 0px 40px;
+}
+
+.add-inspo-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    img {
+        padding-right: 8px;
+    }
 }
 
 /* Search / Tag Related Formattings */
@@ -174,18 +205,20 @@ nav {
     justify-content: space-between;
 
     .logo {
+        justify-self: start;
         width: 130px;
         margin-bottom: 2px;
     }
 
     .search-bar {
-        width: calc(90vw - 500px);
-        max-width: 840px;
+        width: calc(100vw - 600px);
+        max-width: 560px;
         min-width: fit-content;
-        margin-inline: 25px 10px;
+        margin-inline: clamp(20px, 100vw - 1125px, 165px) 10px;
     }
 
     .nav-links {
+        justify-self: end;
         align-content: center;
         margin-right: 10px;
         gap: 2px;
@@ -346,7 +379,7 @@ nav {
     flex-direction: row;
     align-items: flex-start;
     gap: 10px;
-    max-height: 100%;
+    height: 100%;
     width: min-content;
 }
 
@@ -358,12 +391,11 @@ nav {
     border-radius: 20px;
     border: 1px solid var(--less-white);
     height: 100%;
-    min-width: min(100vw - 135px, 600px);
 }
 
 .full-image {
     max-height: 100%;
-    width: 100%;
+    max-width: min(100vw - 140px, 800px);
     background-color: white;
     margin: 0;
 }
@@ -372,12 +404,12 @@ nav {
     display: flex;
     flex-direction: column;
     background-color: white;
-    max-height: 100%;
+    height: 100%;
     padding: 0;
     border-radius: 20px;
     border: 1px solid var(--less-white);
     max-width: 100%;
-    position: relative; /* For absolute positioning of the saved count */
+    overflow: hidden;
 }
 
 /* Styling for the saved count display */
@@ -421,7 +453,7 @@ nav {
     overflow-y: scroll;
     flex: 1;
     padding-inline: 20px;
-    border-block: 1px solid var(--less-white);
+    border-top: 1px solid var(--less-white);
 }
 
 .comment {
@@ -455,6 +487,12 @@ nav {
 }
 
 .comment-form {
+    background-color: white;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid var(--less-white);
+
     display: flex;
     flex-direction: column;
     padding: 15px;
@@ -481,11 +519,6 @@ nav {
 }
 
 
-
-@media only screen and (max-width: 800px) {
-
-
-}
 /* Muze Board Styles */
 
 .muze-board-container {
@@ -745,4 +778,10 @@ a:hover .save-to-board-btn,
     pointer-events: auto !important; /* Force clickable */
 }
 
-/* End of styles */
+
+/* Responsive adjustments */
+
+@media only screen and (max-width: 768px) {
+
+
+}
