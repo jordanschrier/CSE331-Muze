@@ -4,7 +4,7 @@
     --light-maroon: #B92F22;
     --grayish: #4B444B;
     --light-gray: #AFAFAF;
-    --less-white: #DFDFDF;
+    --less-white: #D0D0D0;
     --off-white: #F5F3F1;
 
     --background: var(--off-white);
@@ -316,11 +316,14 @@ nav {
 }
 
 .description {
+    display: flex;
+    flex-direction: column;
     background-color: white;
     max-height: 100%;
     padding: 0;
     border-radius: 20px;
     border: 1px solid var(--less-white);
+    max-width: 100%;
 }
 
 /* Comments Styling */
@@ -332,6 +335,13 @@ nav {
     justify-content: center;
     padding-right: 50px;
     gap: 10px;
+}
+
+.comments-container {
+    overflow-y: scroll;
+    flex: 1;
+    padding-inline: 20px;
+    border-block: 1px solid var(--less-white);
 }
 
 .comment {
@@ -365,16 +375,19 @@ nav {
 }
 
 .comment-form {
-    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
     padding: 15px;
+    gap: 15px;
 }
 
 #comment-submit {
     width: fit-content;
     padding: 8px 12px;
     background-color: var(--maroon);
-    color: #ffffff;
+    color: white;
     transition: all 0.08s;
+    margin-left: auto;
 }
 #comment-submit:hover {
     background-color: var(--light-maroon);

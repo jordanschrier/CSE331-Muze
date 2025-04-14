@@ -54,19 +54,17 @@
                         <div id="tag1" class="tag"></div>
                         <div id="tag2" class="tag"></div>
                     </div>
-
-                    <!-- Comments Section -->
-                    <div id="comments-container"></div>
                 </div>
                 <!-- User Actions (Fav, Comment, etc)-->
+                <div id="comments-container" class="comments-container"></div>
                 <form id="comment-form" class="comment-form">
-                    <div class="form-group">
-                        <label for="comment-author">Your Name (optional)</label>
-                        <input type="text" id="comment-author" class="form-control input-field" placeholder="Anonymous">
+                    <div>
+                        <label for="comment-author">Add a Comment</label>
+                        <input type="text" id="comment-author" class="form-control input-field" placeholder="Your Name (Optional)">
                     </div>
-                    <div class="form-group">
-                        <label for="comment-text">Your Comment</label>
-                        <textarea id="comment-text" class="form-control input-field" rows="3" required></textarea>
+                    <div>
+                        <!-- <label for="comment-text">Your Comment</label> -->
+                        <textarea id="comment-text" class="form-control input-field" rows="3" placeholder="Message" required ></textarea>
                     </div>
                     <button type="button" id="comment-submit" class="btn btn-primary input-field">Post Comment</button>
                 </form>
